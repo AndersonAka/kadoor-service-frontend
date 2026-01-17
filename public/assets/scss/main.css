@@ -9,7 +9,6 @@ Tag: advanced custom search, agency, agent, business, clean, corporate, director
 
 ********/
 /* CSS Document */
-@import "~bootstrap/scss/bootstrap";
 @import url(../scss/font-awesome.min.css);
 @import url(../scss/font-awesome-animation.min.css);
 @import url(../scss/flaticon.css);
@@ -13163,7 +13162,7 @@ legend span {
   z-index: 3;
 }
 
-.header_user_notif .user_notif .simplebar-offset::-webkit-scrollbar * {
+.header_user_notif .user_notif .simplebar-offset::-webkit-scrollbar {
   background: transparent;
 }
 
@@ -14451,7 +14450,7 @@ legend span {
   z-index: 3;
 }
 
-.sidebar-menu::-webkit-scrollbar * {
+.sidebar-menu::-webkit-scrollbar {
   background: transparent;
   border-radius: 6px;
 }
@@ -14684,7 +14683,7 @@ legend span {
   z-index: 3;
 }
 
-.cl_skill_checkbox .content.ui_kit_checkbox::-webkit-scrollbar * {
+.cl_skill_checkbox .content.ui_kit_checkbox::-webkit-scrollbar {
   background: transparent;
   border-radius: 6px;
 }
@@ -18202,7 +18201,7 @@ canvas {
   z-index: 3;
 }
 
-.sidebar_content_details::-webkit-scrollbar * {
+.sidebar_content_details::-webkit-scrollbar {
   background: transparent;
   margin-right: -10px;
 }
