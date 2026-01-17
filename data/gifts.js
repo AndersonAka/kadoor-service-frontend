@@ -1,0 +1,50 @@
+module.exports = [
+    {
+        id: 1,
+        img: "/assets/images/property/fp4.jpg",
+        price: "15000",
+        type: "Coffret Cadeau",
+        title: "Panier Garni - Délice Local",
+        location: "Livraison Douala & Yaoundé",
+        saleTag: ["Nouveau", "Disponible"],
+        itemDetails: [
+            { name: "Articles", number: "12" },
+            { name: "Poids", number: "2kg" },
+            { name: "Occasion", number: "Tout événement" },
+        ],
+        posterAvatar: "/assets/images/property/pposter1.png",
+        posterName: "Kadoor Service",
+        postedYear: "Récent",
+        imgList: [
+            "/assets/images/property/2.jpg",
+        ],
+        built: "2024",
+        amenities: "Emballage luxe, Carte personnalisée",
+        featured: "sale",
+        created_at: Date.now(),
+    },
+    {
+        id: 2,
+        img: "/assets/images/property/fp5.jpg",
+        price: "25000",
+        type: "Fleurs & Chocolat",
+        title: "Bouquet Royal & Ferrero",
+        location: "Livraison Douala",
+        saleTag: ["Populaire", "Saint-Valentin"],
+        itemDetails: [
+            { name: "Fleurs", number: "24" },
+            { name: "Chocolats", number: "16" },
+            { name: "Format", number: "Standard" },
+        ],
+        posterAvatar: "/assets/images/property/pposter2.png",
+        posterName: "Kadoor Service",
+        postedYear: "Récent",
+        imgList: [
+            "/assets/images/property/3.jpg",
+        ],
+        built: "2024",
+        amenities: "Livraison express, Fraîcheur garantie",
+        featured: "sale",
+        created_at: Date.now(),
+    }
+];

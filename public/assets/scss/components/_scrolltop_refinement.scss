@@ -1,0 +1,23 @@
+/* ScrollToTop Adaptation */
+.scrollToHome {
+    background-color: var(--color-primary) !important;
+    color: #fff !important;
+    border-radius: 50% !important;
+    box-shadow: 0 4px 15px rgba(255, 90, 95, 0.3) !important;
+    transition: all 0.3s ease !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    &:hover {
+        background-color: #e54b50 !important;
+        /* Slightly darker shade of primary */
+        transform: translateY(-5px) !important;
+        box-shadow: 0 6px 20px rgba(255, 90, 95, 0.4) !important;
+    }
+
+    i::before {
+        font-size: 18px !important;
+        color: #fff !important;
+    }
+}
