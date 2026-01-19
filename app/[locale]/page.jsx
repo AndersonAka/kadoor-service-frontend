@@ -1,6 +1,6 @@
 import FeaturedProperties from "@/components/home/FeaturedProperties";
 import WhyChoose from "@/components/common/WhyChoose";
-import Testimonial from "@/components/common/Testimonial";
+import TestimonialSection from "@/components/common/TestimonialSection";
 import Partners from "@/components/common/Partners";
 import CallToAction from "@/components/common/CallToAction";
 import Footer from "@/components/common/footer/Footer";
@@ -84,28 +84,7 @@ const Home = () => {
       </section>
 
       {/* <!-- Our Testimonials --> */}
-      <section id="our-testimonials" className="our-testimonial">
-        <div className="container">
-          <div className="row">
-            <div className="col-lg-6 offset-lg-3">
-              <div className="main-title text-center">
-                <h2>{t('testimonials_title')}</h2>
-                <p>{t('testimonials_subtitle')}</p>
-              </div>
-            </div>
-          </div>
-          {/* End .row */}
-          <div className="row">
-            <div className="col-lg-6 offset-lg-3">
-              <div className="testimonial_grid_slider">
-                <Testimonial />
-              </div>
-            </div>
-          </div>
-          {/* End .row */}
-        </div>
-        {/* End .container */}
-      </section>
+      <TestimonialSection />
 
       {/* <!-- Our Partners --> */}
       {/* <section id="our-partners" className="our-partners">

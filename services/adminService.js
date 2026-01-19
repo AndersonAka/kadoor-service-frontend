@@ -1,7 +1,7 @@
 // Utiliser le proxy Next.js pour les appels API
 // Le proxy redirige /api/* vers le backend
-// Si NEXT_PUBLIC_API_BASE est défini, l'utiliser directement, sinon utiliser le proxy /api
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE || '/api';
+// En production, utilisez NEXT_PUBLIC_API_URL si le proxy n'est pas disponible
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || '/api';
 
 /**
  * Service pour les APIs d'administration
@@ -27,13 +27,32 @@ class AdminService {
    */
   async getDashboardStats() {
     try {
-      const response = await fetch(`${API_BASE}/admin/dashboard/stats`, {
+      const url = `${API_BASE}/admin/dashboard/stats`;
+      console.log('[AdminService] Fetching dashboard stats from:', url);
+      console.log('[AdminService] API_BASE:', API_BASE);
+      
+      const response = await fetch(url, {
         headers: this.getAuthHeaders(),
       });
-      if (!response.ok) throw new Error('Erreur lors de la récupération des statistiques');
-      return await response.json();
+      
+      console.log('[AdminService] Dashboard stats response status:', response.status);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('[AdminService] Dashboard stats error response:', errorText);
+        throw new Error(`Erreur ${response.status}: ${errorText || 'Erreur lors de la récupération des statistiques'}`);
+      }
+      
+      const data = await response.json();
+      console.log('[AdminService] Dashboard stats data received:', data);
+      return data;
     } catch (error) {
-      console.error('Error fetching dashboard stats:', error);
+      console.error('[AdminService] Error fetching dashboard stats:', error);
+      console.error('[AdminService] Error details:', {
+        message: error.message,
+        stack: error.stack,
+        API_BASE,
+      });
       throw error;
     }
   }
@@ -44,13 +63,32 @@ class AdminService {
    */
   async getChartData(period = 'month') {
     try {
-      const response = await fetch(`${API_BASE}/admin/dashboard/charts?period=${period}`, {
+      const url = `${API_BASE}/admin/dashboard/charts?period=${period}`;
+      console.log('[AdminService] Fetching chart data from:', url);
+      
+      const response = await fetch(url, {
         headers: this.getAuthHeaders(),
       });
-      if (!response.ok) throw new Error('Erreur lors de la récupération des données graphiques');
-      return await response.json();
+      
+      console.log('[AdminService] Chart data response status:', response.status);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('[AdminService] Chart data error response:', errorText);
+        throw new Error(`Erreur ${response.status}: ${errorText || 'Erreur lors de la récupération des données graphiques'}`);
+      }
+      
+      const data = await response.json();
+      console.log('[AdminService] Chart data received:', data);
+      return data;
     } catch (error) {
-      console.error('Error fetching chart data:', error);
+      console.error('[AdminService] Error fetching chart data:', error);
+      console.error('[AdminService] Error details:', {
+        message: error.message,
+        stack: error.stack,
+        API_BASE,
+        period,
+      });
       throw error;
     }
   }

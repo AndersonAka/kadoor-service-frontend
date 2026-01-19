@@ -100,14 +100,33 @@ const FeaturedItem = ({ dataType = "properties" }) => {
               featured: "Disposable"
             }));
 
-            // Appliquer les filtres côté client (seats et transmission)
+            // Appliquer les filtres côté client (seats, transmission, year)
             if (bedrooms) {
-              mappedVehicles = mappedVehicles.filter(v => v.seats === parseInt(bedrooms));
+              const seatsValue = parseInt(bedrooms);
+              if (!isNaN(seatsValue)) {
+                mappedVehicles = mappedVehicles.filter(v => v.seats === seatsValue);
+              }
             }
             if (garages) {
-              mappedVehicles = mappedVehicles.filter(v => 
-                v.transmission?.toLowerCase().includes(garages.toLowerCase())
-              );
+              const transmissionValue = garages.toLowerCase();
+              mappedVehicles = mappedVehicles.filter(v => {
+                const vehicleTransmission = v.transmission?.toLowerCase() || '';
+                if (transmissionValue === 'automatic') {
+                  return vehicleTransmission.includes('automatique') || vehicleTransmission.includes('automatic');
+                } else if (transmissionValue === 'manual') {
+                  return vehicleTransmission.includes('manuelle') || vehicleTransmission.includes('manual');
+                }
+                return vehicleTransmission.includes(transmissionValue);
+              });
+            }
+            if (yearBuilt) {
+              const yearValue = parseInt(yearBuilt);
+              if (!isNaN(yearValue)) {
+                mappedVehicles = mappedVehicles.filter(v => {
+                  const vehicleYear = v.postedYear ? parseInt(v.postedYear) : null;
+                  return vehicleYear === yearValue;
+                });
+              }
             }
 
             // Pagination côté client
@@ -139,12 +158,12 @@ const FeaturedItem = ({ dataType = "properties" }) => {
       };
       fetchVehicles();
     }
-  }, [dataType, apiFilters, bedrooms, garages, currentPage]);
+  }, [dataType, apiFilters, bedrooms, garages, yearBuilt, currentPage]);
 
   // Réinitialiser la page quand les filtres changent
   useEffect(() => {
     setCurrentPage(1);
-  }, [keyword, location, propertyType, price, bedrooms, garages]);
+  }, [keyword, location, propertyType, price, bedrooms, garages, yearBuilt]);
 
   const data = dataType === "vehicles" ? vehicles : propertiesData;
 

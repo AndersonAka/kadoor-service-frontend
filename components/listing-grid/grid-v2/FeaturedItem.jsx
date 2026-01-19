@@ -117,9 +117,95 @@ const FeaturedItem = ({ dataType = "properties" }) => {
               amenities: a.features && a.features.length > 0 ? a.features.join(", ") : "Climatisation, Wi-Fi, Parking",
               featured: "rent",
               created_at: new Date(a.createdAt || Date.now()).getTime(),
+              // Données brutes pour le filtrage
+              _raw: {
+                bathrooms: a.bathrooms,
+                area: a.area,
+                features: a.features || [],
+                isAvailable: a.isAvailable,
+                createdAt: a.createdAt,
+              }
             }));
-            setApartments(mappedApartments);
-            setPaginationMeta(result.meta || { total: 0, page: 1, limit: 10, totalPages: 0 });
+
+            // Appliquer les filtres côté client (bathrooms, area, amenities, yearBuilt, status)
+            let filteredApartments = mappedApartments;
+            
+            // Filtrer par bathrooms
+            if (bathrooms) {
+              const bathroomsValue = parseInt(bathrooms);
+              if (!isNaN(bathroomsValue)) {
+                filteredApartments = filteredApartments.filter(a => 
+                  a._raw.bathrooms === bathroomsValue
+                );
+              }
+            }
+            
+            // Filtrer par area
+            if (area?.min) {
+              const areaMinValue = parseFloat(area.min);
+              if (!isNaN(areaMinValue)) {
+                filteredApartments = filteredApartments.filter(a => 
+                  a._raw.area >= areaMinValue
+                );
+              }
+            }
+            if (area?.max) {
+              const areaMaxValue = parseFloat(area.max);
+              if (!isNaN(areaMaxValue)) {
+                filteredApartments = filteredApartments.filter(a => 
+                  a._raw.area <= areaMaxValue
+                );
+              }
+            }
+            
+            // Filtrer par amenities
+            if (amenities && amenities.length > 0) {
+              filteredApartments = filteredApartments.filter(a => {
+                const apartmentFeatures = a._raw.features || [];
+                return amenities.every(amenity => {
+                  const amenityLower = amenity.toLowerCase();
+                  return apartmentFeatures.some(feature => 
+                    feature.toLowerCase().includes(amenityLower)
+                  );
+                });
+              });
+            }
+            
+            // Filtrer par yearBuilt (année de création)
+            if (yearBuilt) {
+              const yearValue = parseInt(yearBuilt);
+              if (!isNaN(yearValue)) {
+                filteredApartments = filteredApartments.filter(a => {
+                  const createdYear = new Date(a._raw.createdAt).getFullYear();
+                  return createdYear === yearValue;
+                });
+              }
+            }
+            
+            // Filtrer par status
+            if (status) {
+              filteredApartments = filteredApartments.filter(a => {
+                if (status === 'available') return a._raw.isAvailable === true;
+                if (status === 'unavailable') return a._raw.isAvailable === false;
+                return true;
+              });
+            }
+
+            // Pagination côté client
+            const itemsPerPage = 10;
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginatedApartments = filteredApartments.slice(startIndex, endIndex);
+
+            setApartments(paginatedApartments);
+            // Métadonnées de pagination basées sur les données filtrées
+            const filteredTotal = filteredApartments.length;
+            setPaginationMeta({
+              total: filteredTotal,
+              page: currentPage,
+              limit: itemsPerPage,
+              totalPages: Math.ceil(filteredTotal / itemsPerPage)
+            });
           } else {
             setApartments(apartmentsData);
             setPaginationMeta({ total: apartmentsData.length, page: 1, limit: 10, totalPages: 1 });
@@ -134,12 +220,12 @@ const FeaturedItem = ({ dataType = "properties" }) => {
       };
       fetchApartments();
     }
-  }, [dataType, apiFilters]);
+  }, [dataType, apiFilters, bathrooms, area, amenities, yearBuilt, status, currentPage]);
 
   // Réinitialiser la page quand les filtres changent
   useEffect(() => {
     setCurrentPage(1);
-  }, [keyword, location, price, bedrooms]);
+  }, [keyword, location, price, bedrooms, bathrooms, area, amenities, yearBuilt, status]);
 
   const data =
     dataType === "apartments" ? apartments :
@@ -170,6 +256,7 @@ const FeaturedItem = ({ dataType = "properties" }) => {
   }
 
   // Appliquer les filtres côté client pour les autres types (gifts, properties)
+  // Note: Les appartements sont déjà filtrés dans le useEffect
   const filteredData = dataType === "apartments" ? data : (() => {
     const keywordHandler = (item) =>
       item.title?.toLowerCase().includes(keyword?.toLowerCase() || "");

@@ -1,8 +1,11 @@
-import Link from "next/link";
+import { Link } from '@/i18n/routing';
+import { useTranslations } from 'next-intl';
 import Form from "./Form";
 import Image from "next/image";
 
 const ErrorPageContent = () => {
+  const t = useTranslations('NotFoundPage');
+
   return (
     <div className="error_page footer_apps_widget">
       <Image
@@ -13,15 +16,15 @@ const ErrorPageContent = () => {
         alt="error.png"
       />
       <div className="erro_code">
-        <h1>Ohh! Page Not Found</h1>
+        <h1>{t('title')}</h1>
       </div>
-      <p>We can’t seem to find the page you’re looking for</p>
+      <p>{t('description')}</p>
 
       <Form />
       {/* End form */}
 
       <Link href="/" className="btn btn_error btn-thm">
-        Back To Home
+        {t('back_to_home')}
       </Link>
     </div>
   );

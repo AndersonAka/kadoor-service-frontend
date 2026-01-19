@@ -97,11 +97,11 @@ const HeaderMenuContent = ({ float = "" }) => {
               Conditions générales de location
             </Link>
           </li>
-          {(user && (user.role === 'ADMIN' || user.role === 'MANAGER')) && (
+          {/* {(user && (user.role === 'ADMIN' || user.role === 'MANAGER')) && (
             <li>
               <Link href="/my-dashboard">Dashboard {user.role === 'ADMIN' ? 'Admin' : 'Manager'}</Link>
             </li>
-          )}
+          )} */}
         </ul>
       </li>
 

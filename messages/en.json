@@ -187,7 +187,9 @@
         "email_placeholder": "Your email",
         "subscribe_success": "Subscription successful! Thank you for subscribing.",
         "subscribe_error": "Error subscribing. Please try again.",
-        "invalid_email": "Please enter a valid email address."
+        "invalid_email": "Please enter a valid email address.",
+        "copyright_text": "All rights reserved",
+        "developed_by": "Developed by"
     },
     "Comments": {
         "title": "Comments and Reviews",
@@ -632,5 +634,11 @@
         "filter_year": "Year",
         "pending_reservations": "Pending Reservations",
         "select_new_status": "Select a new status"
+    },
+    "NotFoundPage": {
+        "title": "Ohh! Page Not Found",
+        "description": "We can't seem to find the page you're looking for",
+        "search_placeholder": "Search",
+        "back_to_home": "Back To Home"
     }
 }

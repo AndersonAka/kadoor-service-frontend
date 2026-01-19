@@ -1,13 +1,19 @@
-import Link from "next/link";
+'use client';
+
+import { Link } from "@/i18n/routing";
+import { useTranslations } from 'next-intl';
 
 const CopyrightFooter = () => {
+  const t = useTranslations('Navigation');
+  const tFooter = useTranslations('Footer');
+
   const menuItems = [
-    { id: 1, name: "Home", routeLink: "/" },
-    { id: 2, name: "Listing", routeLink: "/listing-grid-v3" },
-    { id: 3, name: "Property", routeLink: "/listing-grid-v4" },
-    { id: 4, name: "About Us", routeLink: "/about-us" },
-    { id: 5, name: "Blog", routeLink: "/blog-list-3" },
-    { id: 6, name: "Contact", routeLink: "/contact" },
+    { id: 1, name: t('home'), routeLink: "/" },
+    { id: 2, name: t('vehicles'), routeLink: "/vehicles" },
+    { id: 3, name: t('apartments'), routeLink: "/apartments" },
+    { id: 4, name: t('gifts'), routeLink: "/gifts" },
+    { id: 5, name: t('about_us'), routeLink: "/about-us" },
+    { id: 6, name: t('contact'), routeLink: "/contact" },
   ];
 
   return (
@@ -28,15 +34,15 @@ const CopyrightFooter = () => {
       <div className="col-lg-6 col-xl-6">
         <div className="copyright-widget text-end">
           <p>
-            &copy; {new Date().getFullYear()} by{" "}
+            &copy; {new Date().getFullYear()} KADOOR SERVICE - {tFooter('developed_by')}{" "}
             <a
-              href="https://kadoorservices.com"
+              href="https://anderson-aka-pro.vercel.app/"
               target="_blank"
               rel="noreferrer"
             >
-              KADOOR SERVICES
+              Anderson Aka
             </a>
-            . All rights reserved.
+            . {tFooter('copyright_text')}.
           </p>
         </div>
       </div>

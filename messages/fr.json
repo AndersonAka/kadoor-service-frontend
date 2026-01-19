@@ -187,7 +187,9 @@
         "email_placeholder": "Votre email",
         "subscribe_success": "Abonnement réussi ! Merci de vous être abonné.",
         "subscribe_error": "Erreur lors de l'abonnement. Veuillez réessayer.",
-        "invalid_email": "Veuillez entrer une adresse email valide."
+        "invalid_email": "Veuillez entrer une adresse email valide.",
+        "copyright_text": "Tous droits réservés",
+        "developed_by": "Développé par"
     },
     "Comments": {
         "title": "Commentaires et Témoignages",
@@ -632,5 +634,11 @@
         "filter_year": "Année",
         "pending_reservations": "Réservations en attente",
         "select_new_status": "Sélectionner un nouveau statut"
+    },
+    "NotFoundPage": {
+        "title": "Ohh! Page Non Trouvée",
+        "description": "Nous ne trouvons pas la page que vous recherchez",
+        "search_placeholder": "Rechercher",
+        "back_to_home": "Retour à l'accueil"
     }
 }

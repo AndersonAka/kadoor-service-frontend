@@ -1,11 +1,29 @@
 'use client'
 import Image from "next/image";
-import testimonials from "../../data/testimonial";
 import Slider from "react-slick";
-import { useTranslations } from 'next-intl';
+import { useState, useEffect } from "react";
+import { testimonialService } from "../../services/testimonialService";
 
 const Testimonial = () => {
-  const t = useTranslations('HomePage');
+  const [testimonials, setTestimonials] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTestimonials = async () => {
+      try {
+        setLoading(true);
+        const data = await testimonialService.getActiveTestimonials();
+        setTestimonials(data || []);
+      } catch (error) {
+        console.error('Error loading testimonials:', error);
+        setTestimonials([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTestimonials();
+  }, []);
 
   const settings = {
     dots: true,
@@ -16,19 +34,38 @@ const Testimonial = () => {
     autoplay: false,
   };
 
+  if (loading) {
+    return (
+      <div className="text-center py-4">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Chargement...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (testimonials.length === 0) {
+    return null;
+  }
+
   return (
     <>
       <Slider {...settings} arrows={false}>
-        {testimonials.slice(0, 5).map((item, index) => (
+        {testimonials.map((item) => (
           <div className="item" key={item.id}>
             <div className="testimonial_grid">
               <div className="thumb">
-                <Image width={95} height={95} src={item.img} alt="1.jpg" />
+                <Image 
+                  width={95} 
+                  height={95} 
+                  src={item.imageUrl || "/assets/images/testimonial/1.png"} 
+                  alt={item.name} 
+                />
               </div>
               <div className="details">
                 <h4>{item.name}</h4>
-                <p>{t(`testimonial_${index + 1}_designation`)}</p>
-                <p className="mt25">{t(`testimonial_${index + 1}`)}</p>
+                <p>{item.designation}</p>
+                <p className="mt25">{item.comment}</p>
               </div>
             </div>
           </div>
