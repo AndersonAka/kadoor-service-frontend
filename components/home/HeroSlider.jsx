@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Slider from 'react-slick';
-import Link from 'next/link';
+import { Link } from '@/i18n/routing';
 import { useLocale } from 'next-intl';
 import { api } from '../../utils/api';
 
@@ -41,6 +41,31 @@ const HeroSlider = () => {
 
     const getTitle = (slide) => locale === 'fr' ? slide.titleFr : slide.titleEn;
     const getSubtitle = (slide) => locale === 'fr' ? slide.subtitleFr : slide.subtitleEn;
+
+    // Normaliser les liens pour qu'ils fonctionnent avec next-intl
+    const normalizeLink = (link) => {
+      if (!link) return '/';
+      
+      // Si le lien commence par /, c'est un lien interne
+      if (link.startsWith('/')) {
+        // Mapper les routes obsolètes ou invalides vers des routes valides
+        const routeMap = {
+          '/services': '/vehicles', // Rediriger vers les véhicules par défaut
+        };
+        
+        // Si c'est une route à mapper, utiliser la route valide
+        if (routeMap[link]) {
+          return routeMap[link];
+        }
+        
+        // Sinon, retourner le lien tel quel (next-intl gérera la traduction automatiquement)
+        // Les routes définies dans routing.ts seront automatiquement traduites
+        return link;
+      }
+      
+      // Si c'est une URL externe (http/https), retourner tel quel
+      return link;
+    };
 
     if (loading) {
         return (
@@ -198,7 +223,7 @@ const HeroSlider = () => {
                     subtitleEn: "Your auto & real estate partner",
                     imageUrl: "https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=1920",
                     buttonText: "Nos Services",
-                    buttonLink: "/services"
+                    buttonLink: "/vehicles"
                 }]).map((slide) => (
                     <div key={slide.id}>
                         <div
@@ -209,7 +234,7 @@ const HeroSlider = () => {
                                 <h4 className="hero-subtitle">{getSubtitle(slide)}</h4>
                                 <h1 className="hero-title">{getTitle(slide)}</h1>
                                 {slide.buttonText && (
-                                    <Link href={slide.buttonLink || '/'} className="hero-btn">
+                                    <Link href={normalizeLink(slide.buttonLink)} className="hero-btn">
                                         {slide.buttonText}
                                     </Link>
                                 )}

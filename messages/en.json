@@ -633,7 +633,21 @@
         "filter_month": "Month",
         "filter_year": "Year",
         "pending_reservations": "Pending Reservations",
-        "select_new_status": "Select a new status"
+        "select_new_status": "Select a new status",
+        "make": "Make",
+        "model": "Model",
+        "year": "Year",
+        "fuel": "Fuel",
+        "transmission": "Transmission",
+        "seats": "Seats",
+        "select": "Select",
+        "create": "Create",
+        "update": "Update",
+        "vehicle_create_success": "Vehicle created successfully",
+        "vehicle_create_error": "Error creating vehicle",
+        "apartment_create_success": "Apartment created successfully",
+        "apartment_create_error": "Error creating apartment",
+        "area": "Area"
     },
     "NotFoundPage": {
         "title": "Ohh! Page Not Found",

@@ -633,7 +633,21 @@
         "filter_month": "Mois",
         "filter_year": "Année",
         "pending_reservations": "Réservations en attente",
-        "select_new_status": "Sélectionner un nouveau statut"
+        "select_new_status": "Sélectionner un nouveau statut",
+        "make": "Marque",
+        "model": "Modèle",
+        "year": "Année",
+        "fuel": "Carburant",
+        "transmission": "Transmission",
+        "seats": "Places",
+        "select": "Sélectionner",
+        "create": "Créer",
+        "update": "Mettre à jour",
+        "vehicle_create_success": "Véhicule créé avec succès",
+        "vehicle_create_error": "Erreur lors de la création du véhicule",
+        "apartment_create_success": "Appartement créé avec succès",
+        "apartment_create_error": "Erreur lors de la création de l'appartement",
+        "area": "Superficie"
     },
     "NotFoundPage": {
         "title": "Ohh! Page Non Trouvée",

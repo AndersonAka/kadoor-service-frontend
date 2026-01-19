@@ -19,14 +19,36 @@ const ProfileInfo = () => {
     const t = useTranslations('Admin');
 
     useEffect(() => {
-        if (user) {
-            setFormData({
-                firstName: user.firstName || '',
-                lastName: user.lastName || '',
-                email: user.email || '',
-                phone: user.phone || '',
-            });
-        }
+        const loadUserData = async () => {
+            if (user) {
+                // Charger les données depuis le contexte
+                setFormData({
+                    firstName: user.firstName || '',
+                    lastName: user.lastName || '',
+                    email: user.email || '',
+                    phone: user.phone || '',
+                });
+                
+                // Si les données sont incomplètes, essayer de les charger depuis l'API
+                if (!user.firstName && !user.lastName && !user.phone && user.id) {
+                    try {
+                        const userData = await adminService.getClient(user.id);
+                        if (userData) {
+                            setFormData({
+                                firstName: userData.firstName || '',
+                                lastName: userData.lastName || '',
+                                email: userData.email || '',
+                                phone: userData.phone || '',
+                            });
+                        }
+                    } catch (error) {
+                        console.error('Error loading user data:', error);
+                    }
+                }
+            }
+        };
+        
+        loadUserData();
     }, [user]);
 
     // upload profile

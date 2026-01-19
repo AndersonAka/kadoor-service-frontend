@@ -14,6 +14,12 @@ const DashboardPage = () => {
     // Seuls ADMIN et MANAGER peuvent accéder au dashboard
     if (!loading && user && user.role === 'USER') {
       router.push('/');
+      return;
+    }
+    
+    // Si pas connecté, rediriger vers login
+    if (!loading && !user) {
+      router.push('/login');
     }
   }, [user, loading, router]);
 
@@ -41,12 +47,7 @@ const DashboardPage = () => {
     );
   }
 
-  // Si pas connecté, rediriger vers login
-  if (!user) {
-    router.push('/login');
-    return null;
-  }
-
+  // Si pas connecté ou utilisateur USER, afficher un loader (la redirection est gérée dans useEffect)
   return null;
 };
 

@@ -111,7 +111,7 @@ const AdminApartments = () => {
                 <div className="col-lg-12 mb10">
                   <div className="breadcrumb_content style2">
                     <h2 className="breadcrumb_title">{t('apartments_management') || "Gestion des Appartements"}</h2>
-                    <Link href="/create-listing" className="btn btn-thm">
+                    <Link href="/admin/apartments/new" className="btn btn-thm">
                       <i className="flaticon-plus"></i> {t('add_apartment') || "Ajouter un appartement"}
                     </Link>
                   </div>

@@ -96,6 +96,22 @@ export const routing = defineRouting({
     '/admin/incidents': {
       en: '/admin/incidents',
       fr: '/admin/incidents'
+    },
+    '/contact': {
+      en: '/contact',
+      fr: '/contact'
+    },
+    '/about-us': {
+      en: '/about-us',
+      fr: '/about-us'
+    },
+    '/terms': {
+      en: '/terms',
+      fr: '/terms'
+    },
+    '/privacy-policy': {
+      en: '/privacy-policy',
+      fr: '/privacy-policy'
     }
   }
 });

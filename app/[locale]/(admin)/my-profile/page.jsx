@@ -13,6 +13,12 @@ const ProfilePage = () => {
     // Rediriger les utilisateurs USER vers la page de profil simple
     if (!loading && user && user.role === 'USER') {
       router.push('/profile');
+      return;
+    }
+    
+    // Si pas connecté, rediriger vers login
+    if (!loading && !user) {
+      router.push('/login');
     }
   }, [user, loading, router]);
 
@@ -40,12 +46,7 @@ const ProfilePage = () => {
     );
   }
 
-  // Si pas connecté, rediriger vers login
-  if (!user) {
-    router.push('/login');
-    return null;
-  }
-
+  // Si pas connecté ou utilisateur USER, afficher un loader (la redirection est gérée dans useEffect)
   return null;
 };
 
