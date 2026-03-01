@@ -41,7 +41,13 @@ const HeroSlider = () => {
 
     const getTitle = (slide) => locale === 'fr' ? slide.titleFr : slide.titleEn;
     const getSubtitle = (slide) => locale === 'fr' ? slide.subtitleFr : slide.subtitleEn;
-    const getButtonText = (slide) => locale === 'fr' ? slide.buttonTextFr : slide.buttonTextEn;
+    const getButtonText = (slide) => {
+        // Fallback to buttonText if localized fields don't exist
+        if (locale === 'fr') {
+            return slide.buttonTextFr || slide.buttonText || 'En savoir plus';
+        }
+        return slide.buttonTextEn || slide.buttonText || 'Learn more';
+    };
 
     // Normaliser les liens pour qu'ils fonctionnent avec next-intl
     const normalizeLink = (link) => {

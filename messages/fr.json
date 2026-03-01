@@ -714,12 +714,38 @@
         "incident": "Incident",
         "reservation": "Réservation",
         "vehicles_count": "véhicules",
-        "apartments_count": "appartements"
+        "apartments_count": "appartements",
+        "move_up": "Déplacer vers le haut",
+        "move_down": "Déplacer vers le bas",
+        "remove_image": "Supprimer l'image",
+        "main_image": "Principale",
+        "image_url_placeholder": "URL de l'image (https://...)",
+        "add_image": "Ajouter",
+        "image_hint": "La première image sera utilisée comme image principale"
     },
     "NotFoundPage": {
         "title": "Ohh! Page Non Trouvée",
         "description": "Nous ne trouvons pas la page que vous recherchez",
         "search_placeholder": "Rechercher",
         "back_to_home": "Retour à l'accueil"
+    },
+    "Favorites": {
+        "meta_title": "Mes Favoris | KADOOR SERVICE",
+        "meta_description": "Consultez et gérez vos véhicules et appartements favoris",
+        "title": "Mes Favoris",
+        "subtitle": "Retrouvez tous vos véhicules et appartements préférés",
+        "tab_all": "Tous",
+        "tab_vehicles": "Véhicules",
+        "tab_apartments": "Appartements",
+        "empty_title": "Aucun favori",
+        "empty_description": "Vous n'avez pas encore ajouté de favoris. Parcourez nos véhicules et appartements pour commencer.",
+        "browse_vehicles": "Voir les véhicules",
+        "browse_apartments": "Voir les appartements",
+        "login_required": "Connexion requise",
+        "login_description": "Connectez-vous pour voir et gérer vos favoris",
+        "login_button": "Se connecter",
+        "type_vehicle": "Véhicule",
+        "type_apartment": "Appartement",
+        "per_day": "jour"
     }
 }
