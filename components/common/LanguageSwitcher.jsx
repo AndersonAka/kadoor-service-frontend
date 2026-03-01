@@ -32,15 +32,7 @@ export default function LanguageSwitcher() {
             defaultValue={locale}
             disabled={isPending}
             onChange={onSelectChange}
-            className="form-select w-auto ms-3"
-            style={{
-                display: 'inline-block',
-                width: 'auto',
-                backgroundColor: '#f8f9fa',
-                borderColor: '#eee',
-                fontSize: '14px',
-                cursor: 'pointer'
-            }}
+            className="px-3 py-2 text-sm font-medium bg-gray-50 border border-gray-200 rounded-lg cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors disabled:opacity-50"
         >
             <option value="fr">🇫🇷 FR</option>
             <option value="en">🇬🇧 EN</option>

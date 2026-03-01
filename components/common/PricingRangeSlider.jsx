@@ -4,10 +4,11 @@ import { useEffect, useState } from "react";
 import Slider from "rc-slider";
 import { useDispatch, useSelector } from "react-redux";
 import { addPrice } from "../../features/properties/propertiesSlice";
-import { formatPrice } from "@/utils/currency";
+import { useCurrency } from "@/context/CurrencyContext";
 
 const RangeSlider = ({ min = 10000, max = 500000, defaultMin = 10000, defaultMax = 200000 }) => {
   const dispatch = useDispatch();
+  const { formatPrice } = useCurrency();
   const { price: storePrice } = useSelector((state) => state.properties);
   
   // Initialiser avec les valeurs du store si elles existent, sinon utiliser les valeurs par défaut

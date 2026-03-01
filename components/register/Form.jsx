@@ -50,178 +50,177 @@ const Form = () => {
     setLoading(false);
   };
 
+  const inputClass = "w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors text-gray-700 placeholder-gray-400";
+
   return (
-    <form onSubmit={onRegister}>
-      <div className="heading text-center">
-        <h3>{t("title")}</h3>
-        <p className="text-center">
+    <form onSubmit={onRegister} className="space-y-4">
+      {/* Heading */}
+      <div className="text-center mb-4">
+        <h3 className="text-2xl font-bold text-gray-900 mb-2">{t("title")}</h3>
+        <p className="text-gray-500">
           {t("have_account")}{" "}
-          <Link href="/login" className="text-thm">
+          <Link href="/login" className="text-primary font-medium hover:underline">
             {t("login_link")}
           </Link>
         </p>
-        {error && <div className="alert alert-danger">{error}</div>}
-        {googleError && <div className="alert alert-danger">{googleError}</div>}
+        {error && (
+          <div className="mt-3 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">{error}</div>
+        )}
+        {googleError && (
+          <div className="mt-3 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">{googleError}</div>
+        )}
       </div>
-      {/* End .heading */}
 
-      {/* Google Sign Up Button */}
-      <div className="mb-3">
+      {/* Google Sign Up */}
+      <div>
         <GoogleSignInButton 
           mode="signup"
           onError={(err) => setGoogleError(err)}
         />
       </div>
 
-      <div className="divider-with-text my-3">
-        <span>{t("or_email") || "ou avec votre email"}</span>
+      {/* Divider */}
+      <div className="flex items-center gap-3">
+        <div className="flex-1 h-px bg-gray-200" />
+        <span className="text-sm text-gray-400">{t("or_email") || "ou avec votre email"}</span>
+        <div className="flex-1 h-px bg-gray-200" />
       </div>
 
-      <div className="form-group input-group ">
-        <input
-          type="text"
-          className="form-control"
-          required
-          placeholder={t("first_name_placeholder")}
-          name="firstName"
-          value={formData.firstName}
-          onChange={handleInputChange}
-        />
-        <div className="input-group-prepend">
-          <div className="input-group-text">
-            <i className="flaticon-user"></i>
+      {/* Name Row */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+            <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
           </div>
+          <input
+            type="text"
+            required
+            placeholder={t("first_name_placeholder")}
+            name="firstName"
+            value={formData.firstName}
+            onChange={handleInputChange}
+            className={inputClass}
+          />
+        </div>
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+            <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+          </div>
+          <input
+            type="text"
+            required
+            placeholder={t("last_name_placeholder")}
+            name="lastName"
+            value={formData.lastName}
+            onChange={handleInputChange}
+            className={inputClass}
+          />
         </div>
       </div>
-      {/* End .form-group */}
 
-      <div className="form-group input-group ">
-        <input
-          type="text"
-          className="form-control"
-          required
-          placeholder={t("last_name_placeholder")}
-          name="lastName"
-          value={formData.lastName}
-          onChange={handleInputChange}
-        />
-        <div className="input-group-prepend">
-          <div className="input-group-text">
-            <i className="flaticon-user"></i>
-          </div>
+      {/* Phone */}
+      <div className="relative">
+        <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+          <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+          </svg>
         </div>
-      </div>
-      {/* End .form-group */}
-
-      <div className="form-group input-group ">
         <input
           type="tel"
-          className="form-control"
           required
           placeholder={t("phone_placeholder")}
           name="phone"
           value={formData.phone}
           onChange={handleInputChange}
+          className={inputClass}
         />
-        <div className="input-group-prepend">
-          <div className="input-group-text">
-            <i className="fa fa-phone"></i>
-          </div>
-        </div>
       </div>
-      {/* End .form-group */}
 
-      <div className="form-group input-group  ">
+      {/* Email */}
+      <div className="relative">
+        <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+          <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+        </div>
         <input
           type="email"
-          className="form-control"
           required
           placeholder={t("email_placeholder")}
           name="email"
           value={formData.email}
           onChange={handleInputChange}
+          className={inputClass}
         />
-        <div className="input-group-prepend">
-          <div className="input-group-text">
-            <i className="fa fa-envelope-o"></i>
+      </div>
+
+      {/* Password Row */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+            <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
           </div>
+          <input
+            type="password"
+            required
+            placeholder={t("password_placeholder")}
+            name="password"
+            value={formData.password}
+            onChange={handleInputChange}
+            className={inputClass}
+          />
+        </div>
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+            <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+          </div>
+          <input
+            type="password"
+            required
+            placeholder={t("confirm_password_placeholder")}
+            name="confirmPassword"
+            value={formData.confirmPassword}
+            onChange={handleInputChange}
+            className={inputClass}
+          />
         </div>
       </div>
-      {/* End .form-group */}
 
-      <div className="form-group input-group  ">
+      {/* Terms */}
+      <label className="flex items-start gap-3 cursor-pointer">
         <input
-          type="password"
-          className="form-control"
-          required
-          placeholder={t("password_placeholder")}
-          name="password"
-          value={formData.password}
-          onChange={handleInputChange}
-        />
-        <div className="input-group-prepend">
-          <div className="input-group-text">
-            <i className="flaticon-password"></i>
-          </div>
-        </div>
-      </div>
-      {/* End .form-group */}
-
-      <div className="form-group input-group  ">
-        <input
-          type="password"
-          className="form-control"
-          required
-          placeholder={t("confirm_password_placeholder")}
-          name="confirmPassword"
-          value={formData.confirmPassword}
-          onChange={handleInputChange}
-        />
-        <div className="input-group-prepend">
-          <div className="input-group-text">
-            <i className="flaticon-password"></i>
-          </div>
-        </div>
-      </div>
-      {/* End .form-group */}
-
-      <div className="form-group form-check custom-checkbox mb-3">
-        <input
-          className="form-check-input"
           type="checkbox"
-          value=""
           required
           id="terms"
+          className="w-4 h-4 mt-0.5 text-primary border-gray-300 rounded focus:ring-primary"
         />
-        <label className="form-check-label form-check-label" htmlFor="terms">
-          {t("terms_label")}
-        </label>
-      </div>
-      {/* End .form-group */}
+        <span className="text-sm text-gray-600">{t("terms_label")}</span>
+      </label>
 
-      <button type="submit" className="btn btn-log w-100 btn-thm" disabled={loading}>
-        {loading ? t("registering") : t("register_button")}
+      {/* Submit */}
+      <button
+        type="submit"
+        disabled={loading}
+        className="w-full py-3 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        {loading ? (
+          <span className="flex items-center justify-center gap-2">
+            <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+            </svg>
+            {t("registering")}
+          </span>
+        ) : t("register_button")}
       </button>
-      {/* login button */}
-
-      <style jsx>{`
-        .divider-with-text {
-          display: flex;
-          align-items: center;
-          text-align: center;
-          color: #6c757d;
-        }
-        .divider-with-text::before,
-        .divider-with-text::after {
-          content: '';
-          flex: 1;
-          border-bottom: 1px solid #dee2e6;
-        }
-        .divider-with-text span {
-          padding: 0 10px;
-          font-size: 0.9rem;
-        }
-      `}</style>
     </form>
   );
 };

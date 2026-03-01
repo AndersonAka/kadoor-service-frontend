@@ -84,128 +84,139 @@ const ProfileInfo = () => {
     return (
         <form onSubmit={handleSubmit}>
             {message && (
-                <div className={`alert alert-${message.type === 'success' ? 'success' : 'danger'}`} role="alert">
+                <div className={`p-4 rounded-lg mb-4 ${message.type === 'success' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>
                     {message.text}
                 </div>
             )}
 
-            <div className="row">
-                <div className="col-lg-12">
-                    <div className="wrap-custom-file">
+            <div className="space-y-6">
+                {/* Avatar Upload */}
+                <div className="flex items-center gap-6">
+                    <div className="relative">
+                        <div 
+                            className="w-24 h-24 rounded-full bg-gray-200 bg-cover bg-center flex items-center justify-center overflow-hidden"
+                            style={
+                                profile !== null
+                                    ? { backgroundImage: `url(${URL.createObjectURL(profile)})` }
+                                    : user?.avatar
+                                    ? { backgroundImage: `url(${user.avatar})` }
+                                    : undefined
+                            }
+                        >
+                            {!profile && !user?.avatar && (
+                                <span className="text-2xl font-semibold text-gray-500">
+                                    {formData.firstName?.charAt(0)}{formData.lastName?.charAt(0)}
+                                </span>
+                            )}
+                        </div>
+                        <label
+                            htmlFor="image1"
+                            className="absolute bottom-0 right-0 w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center cursor-pointer hover:bg-primary/90 transition-colors"
+                        >
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                        </label>
                         <input
                             type="file"
                             id="image1"
+                            className="hidden"
                             accept="image/png, image/gif, image/jpeg"
                             onChange={uploadProfile}
                         />
-                        <label
-                            style={
-                                profile !== null
-                                    ? {
-                                          backgroundImage: `url(${URL.createObjectURL(
-                                              profile
-                                          )})`,
-                                      }
-                                    : user?.avatar
-                                    ? {
-                                          backgroundImage: `url(${user.avatar})`,
-                                      }
-                                    : undefined
-                            }
-                            htmlFor="image1"
-                        >
-                            <span>
-                                <i className="flaticon-download"></i> {t('upload_photo') || "Télécharger une photo"}{" "}
-                            </span>
-                        </label>
                     </div>
-                    <p>*{t('minimum_size') || "minimum 260px x 260px"}</p>
+                    <div>
+                        <p className="text-sm font-medium text-gray-700">{t('upload_photo') || "Télécharger une photo"}</p>
+                        <p className="text-xs text-gray-500">*{t('minimum_size') || "minimum 260px x 260px"}</p>
+                    </div>
                 </div>
-                {/* End .col */}
 
-                <div className="col-lg-6 col-xl-6">
-                    <div className="my_profile_setting_input form-group">
-                        <label htmlFor="firstName">{t('first_name') || "Prénom"}</label>
+                {/* Form Fields */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2">
+                            {t('first_name') || "Prénom"}
+                        </label>
                         <input
                             type="text"
-                            className="form-control"
                             id="firstName"
                             name="firstName"
                             value={formData.firstName}
                             onChange={handleChange}
                             required
+                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                         />
                     </div>
-                </div>
-                {/* End .col */}
 
-                <div className="col-lg-6 col-xl-6">
-                    <div className="my_profile_setting_input form-group">
-                        <label htmlFor="lastName">{t('last_name') || "Nom"}</label>
+                    <div>
+                        <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-2">
+                            {t('last_name') || "Nom"}
+                        </label>
                         <input
                             type="text"
-                            className="form-control"
                             id="lastName"
                             name="lastName"
                             value={formData.lastName}
                             onChange={handleChange}
                             required
+                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                         />
                     </div>
-                </div>
-                {/* End .col */}
 
-                <div className="col-lg-6 col-xl-6">
-                    <div className="my_profile_setting_input form-group">
-                        <label htmlFor="email">{t('email') || "Email"}</label>
+                    <div>
+                        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                            {t('email') || "Email"}
+                        </label>
                         <input
                             type="email"
-                            className="form-control"
                             id="email"
                             name="email"
                             value={formData.email}
                             disabled
-                            title={t('email_not_editable') || "L'email ne peut pas être modifié"}
+                            className="w-full px-4 py-3 border border-gray-200 rounded-lg bg-gray-50 text-gray-500 cursor-not-allowed"
                         />
-                        <small className="text-muted">{t('email_not_editable') || "L'email ne peut pas être modifié"}</small>
+                        <p className="text-xs text-gray-400 mt-1">{t('email_not_editable') || "L'email ne peut pas être modifié"}</p>
                     </div>
-                </div>
-                {/* End .col */}
 
-                <div className="col-lg-6 col-xl-6">
-                    <div className="my_profile_setting_input form-group">
-                        <label htmlFor="phone">{t('phone') || "Téléphone"}</label>
+                    <div>
+                        <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                            {t('phone') || "Téléphone"}
+                        </label>
                         <input
                             type="tel"
-                            className="form-control"
                             id="phone"
                             name="phone"
                             value={formData.phone}
                             onChange={handleChange}
                             placeholder="+225 XX XX XX XX XX"
+                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                         />
                     </div>
                 </div>
-                {/* End .col */}
 
-                <div className="col-xl-12 text-right">
-                    <div className="my_profile_setting_input">
-                        <button type="submit" className="btn btn-thm" disabled={loading}>
-                            {loading ? (
-                                <>
-                                    <span className="spinner-border spinner-border-sm me-2" role="status"></span>
-                                    {t('updating') || "Mise à jour..."}
-                                </>
-                            ) : (
-                                <>
-                                    <i className="fa fa-save me-2"></i>
-                                    {t('update_profile') || "Mettre à jour le profil"}
-                                </>
-                            )}
-                        </button>
-                    </div>
+                {/* Submit Button */}
+                <div className="flex justify-end">
+                    <button 
+                        type="submit" 
+                        disabled={loading}
+                        className="px-6 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 flex items-center gap-2"
+                    >
+                        {loading ? (
+                            <>
+                                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                {t('updating') || "Mise à jour..."}
+                            </>
+                        ) : (
+                            <>
+                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                </svg>
+                                {t('update_profile') || "Mettre à jour le profil"}
+                            </>
+                        )}
+                    </button>
                 </div>
-                {/* End .col */}
             </div>
         </form>
     );

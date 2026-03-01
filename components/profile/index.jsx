@@ -1,11 +1,9 @@
 'use client';
 
-import Header from "../home-10/Header";
-import MobileMenu from "../common/header/MobileMenu";
+import Image from 'next/image';
+import HeaderTailwind from "../common/header/HeaderTailwind";
+import FooterTailwind from "../common/footer/FooterTailwind";
 import PopupSignInUp from "../common/PopupSignInUp";
-import BreadCrumb from "../common/BreadCrumb";
-import Footer from "../common/footer/Footer";
-import CopyrightFooter from "../common/footer/CopyrightFooter";
 import ProfileContent from "./ProfileContent";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/context/AuthContext";
@@ -25,10 +23,8 @@ const Profile = () => {
 
   if (loading) {
     return (
-      <div className="d-flex justify-content-center align-items-center min-vh-100">
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Chargement...</span>
-        </div>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
@@ -39,44 +35,36 @@ const Profile = () => {
 
   return (
     <>
-      {/* <!-- Main Header Nav --> */}
-      <Header />
-
-      {/* <!--  Mobile Menu --> */}
-      <MobileMenu />
-
-      {/* <!-- Modal --> */}
+      <HeaderTailwind />
       <PopupSignInUp />
 
-      {/* <!-- Inner Page Breadcrumb --> */}
-      <BreadCrumb title={t("page_title") || "Mon Profil"} />
-
-      {/* <!-- Our Profile --> */}
-      <section className="our-profile bgc-fa">
-        <div className="container">
-          <div className="row">
-            <div className="col-lg-12">
-              <ProfileContent />
-            </div>
-          </div>
+      {/* Hero */}
+      <section className="pt-28 pb-12 relative overflow-hidden">
+        {/* Background Image */}
+        <div className="absolute inset-0">
+          <Image
+            src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1920&q=80"
+            alt="Profile background"
+            fill
+            className="object-cover"
+            priority
+          />
+          <div className="absolute "></div>
+        </div>
+        <div className="container-kadoor text-center relative z-10">
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">{t("page_title") || "Mon Profil"}</h1>
+          <p className="text-xl text-gray-300">Gérez vos informations personnelles</p>
         </div>
       </section>
 
-      {/* <!-- Our Footer --> */}
-      <section className="footer_one">
-        <div className="container">
-          <div className="row">
-            <Footer />
-          </div>
+      {/* Content */}
+      <section className="py-16 bg-gray-50">
+        <div className="container-kadoor">
+          <ProfileContent />
         </div>
       </section>
 
-      {/* <!-- Our Footer Bottom Area --> */}
-      <section className="footer_middle_area pt40 pb40">
-        <div className="container">
-          <CopyrightFooter />
-        </div>
-      </section>
+      <FooterTailwind />
     </>
   );
 };

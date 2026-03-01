@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useTranslations } from 'next-intl';
-import Image from 'next/image';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
 
@@ -103,16 +102,12 @@ const CommentsSection = ({ itemId, itemType, itemTitle }) => {
 
   const renderStars = (value, interactive = false, onChange = null) => {
     return (
-      <div className="star-rating" style={{ display: 'flex', gap: '5px' }}>
+      <div className="flex gap-1">
         {[1, 2, 3, 4, 5].map((star) => (
           <span
             key={star}
             onClick={() => interactive && onChange && onChange(star)}
-            style={{
-              cursor: interactive ? 'pointer' : 'default',
-              fontSize: '20px',
-              color: star <= value ? '#ffc107' : '#ddd',
-            }}
+            className={`text-xl ${interactive ? 'cursor-pointer' : ''} ${star <= value ? 'text-yellow-400' : 'text-gray-300'}`}
           >
             ★
           </span>
@@ -131,197 +126,91 @@ const CommentsSection = ({ itemId, itemType, itemTitle }) => {
   };
 
   return (
-    <div className="comments-section">
-      <style jsx>{`
-        .comments-section {
-          margin-top: 40px;
-          padding: 30px;
-          background: #f8f9fa;
-          border-radius: 10px;
-        }
-        .comments-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 30px;
-          padding-bottom: 20px;
-          border-bottom: 2px solid #e0e0e0;
-        }
-        .rating-summary {
-          text-align: center;
-        }
-        .rating-summary .average {
-          font-size: 48px;
-          font-weight: bold;
-          color: #b91c1c;
-          line-height: 1;
-        }
-        .rating-summary .count {
-          color: #666;
-          margin-top: 5px;
-        }
-        .comment-form {
-          background: white;
-          padding: 25px;
-          border-radius: 8px;
-          margin-bottom: 30px;
-        }
-        .comment-form textarea {
-          width: 100%;
-          min-height: 120px;
-          padding: 15px;
-          border: 1px solid #ddd;
-          border-radius: 5px;
-          font-family: inherit;
-          resize: vertical;
-        }
-        .comment-form button {
-          background: linear-gradient(135deg, #b91c1c 0%, #d4af37 100%);
-          color: white;
-          border: none;
-          padding: 12px 30px;
-          border-radius: 25px;
-          cursor: pointer;
-          font-weight: 600;
-          margin-top: 15px;
-        }
-        .comment-form button:hover {
-          opacity: 0.9;
-        }
-        .comment-form button:disabled {
-          opacity: 0.6;
-          cursor: not-allowed;
-        }
-        .comment-item {
-          background: white;
-          padding: 20px;
-          border-radius: 8px;
-          margin-bottom: 15px;
-        }
-        .comment-header {
-          display: flex;
-          align-items: center;
-          margin-bottom: 10px;
-        }
-        .comment-avatar {
-          width: 50px;
-          height: 50px;
-          border-radius: 50%;
-          background: #b91c1c;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: white;
-          font-weight: bold;
-          margin-right: 15px;
-        }
-        .comment-author {
-          flex: 1;
-        }
-        .comment-author-name {
-          font-weight: 600;
-          color: #333;
-        }
-        .comment-date {
-          font-size: 12px;
-          color: #999;
-        }
-        .comment-text {
-          color: #555;
-          line-height: 1.6;
-          margin-top: 10px;
-        }
-      `}</style>
-
-      <div className="comments-header">
+    <div className="bg-white rounded-xl shadow-sm p-6 md:p-8">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 pb-6 border-b border-gray-200">
         <div>
-          <h3 style={{ margin: 0, fontSize: '24px', color: '#333' }}>
+          <h3 className="text-2xl font-bold text-gray-900">
             {t('title') || 'Commentaires et Témoignages'}
           </h3>
-          <p style={{ margin: '5px 0 0 0', color: '#666' }}>
+          <p className="text-gray-500 mt-1">
             {t('subtitle') || `Partagez votre expérience avec ${itemTitle}`}
           </p>
         </div>
         {averageRating.count > 0 && (
-          <div className="rating-summary">
-            <div className="average">{averageRating.average.toFixed(1)}</div>
+          <div className="text-center">
+            <div className="text-5xl font-bold text-primary leading-none">{averageRating.average.toFixed(1)}</div>
             {renderStars(Math.round(averageRating.average))}
-            <div className="count">
+            <div className="text-sm text-gray-500 mt-1">
               {averageRating.count} {averageRating.count === 1 ? t('review') || 'avis' : t('reviews') || 'avis'}
             </div>
           </div>
         )}
       </div>
 
+      {/* Comment Form */}
       {user ? (
-        <form className="comment-form" onSubmit={handleSubmit}>
-          <div style={{ marginBottom: '15px' }}>
-            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 600 }}>
-              {t('your_rating') || 'Votre note'}:
+        <form onSubmit={handleSubmit} className="bg-gray-50 rounded-xl p-6 mb-8">
+          <div className="mb-4">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              {t('your_rating') || 'Votre note'}
             </label>
             {renderStars(rating, true, setRating)}
           </div>
-          <div>
-            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 600 }}>
-              {t('your_comment') || 'Votre commentaire'}:
+          <div className="mb-4">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              {t('your_comment') || 'Votre commentaire'}
             </label>
             <textarea
               value={comment}
               onChange={(e) => setComment(e.target.value)}
               placeholder={t('comment_placeholder') || 'Partagez votre expérience...'}
               required
+              className="w-full min-h-[120px] p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors text-gray-700 placeholder-gray-400 resize-y"
             />
           </div>
-          <button type="submit" disabled={submitting}>
+          <button
+            type="submit"
+            disabled={submitting}
+            className="px-6 py-3 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             {submitting ? (t('submitting') || 'Envoi...') : (t('submit') || 'Publier le commentaire')}
           </button>
         </form>
       ) : (
-        <div style={{ 
-          background: 'white', 
-          padding: '20px', 
-          borderRadius: '8px', 
-          marginBottom: '30px',
-          textAlign: 'center',
-          color: '#666'
-        }}>
+        <div className="bg-gray-50 rounded-xl p-6 mb-8 text-center text-gray-500">
           {t('login_to_comment') || 'Connectez-vous pour laisser un commentaire'}
         </div>
       )}
 
+      {/* Comments List */}
       {loading ? (
-        <div style={{ textAlign: 'center', padding: '40px' }}>
-          {t('loading') || 'Chargement des commentaires...'}
+        <div className="flex items-center justify-center py-10">
+          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
         </div>
       ) : comments.length === 0 ? (
-        <div style={{ 
-          textAlign: 'center', 
-          padding: '40px', 
-          color: '#999',
-          background: 'white',
-          borderRadius: '8px'
-        }}>
-          {t('no_comments') || 'Aucun commentaire pour le moment. Soyez le premier à commenter !'}
+        <div className="text-center py-10 text-gray-400 bg-gray-50 rounded-xl">
+          {t('no_comments') || 'Aucun commentaire pour le moment. Soyez le premier !'}
         </div>
       ) : (
-        <div className="comments-list">
-          {comments.map((comment) => (
-            <div key={comment.id} className="comment-item">
-              <div className="comment-header">
-                <div className="comment-avatar">
-                  {comment.user?.firstName?.[0]?.toUpperCase() || comment.user?.email?.[0]?.toUpperCase() || 'U'}
+        <div className="space-y-4">
+          {comments.map((c) => (
+            <div key={c.id} className="bg-gray-50 rounded-xl p-5">
+              <div className="flex items-center gap-4 mb-3">
+                <div className="w-11 h-11 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                  {c.user?.firstName?.[0]?.toUpperCase() || c.user?.email?.[0]?.toUpperCase() || 'U'}
                 </div>
-                <div className="comment-author">
-                  <div className="comment-author-name">
-                    {comment.user?.firstName && comment.user?.lastName
-                      ? `${comment.user.firstName} ${comment.user.lastName}`
-                      : comment.user?.email || 'Utilisateur'}
+                <div className="flex-1 min-w-0">
+                  <div className="font-semibold text-gray-900">
+                    {c.user?.firstName && c.user?.lastName
+                      ? `${c.user.firstName} ${c.user.lastName}`
+                      : c.user?.email || 'Utilisateur'}
                   </div>
-                  <div className="comment-date">{formatDate(comment.createdAt)}</div>
+                  <div className="text-xs text-gray-400">{formatDate(c.createdAt)}</div>
                 </div>
-                <div>{renderStars(comment.rating)}</div>
+                <div>{renderStars(c.rating)}</div>
               </div>
-              <div className="comment-text">{comment.comment}</div>
+              <p className="text-gray-600 leading-relaxed">{c.comment}</p>
             </div>
           ))}
         </div>

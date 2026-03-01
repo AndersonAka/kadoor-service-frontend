@@ -1,4 +1,4 @@
-import Ratings from "../../blog-details/Ratings";
+import Ratings from "../Ratings";
 
 const WhatsNearby = () => {
   const nearbyContent = [

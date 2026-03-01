@@ -6,39 +6,40 @@ import GiftPersonalization from "./GiftPersonalization";
 
 const GiftDetailsContent = ({ item }) => {
     return (
-        <>
-            <div className="listing_single_description">
-                <h4 className="mb30">Description du cadeau</h4>
+        <div className="space-y-8">
+            {/* Description */}
+            <div className="bg-white rounded-xl p-6 shadow-sm">
+                <h3 className="text-xl font-bold text-gray-900 mb-4">Description du cadeau</h3>
                 <PropertyDescriptions />
             </div>
-            {/* End .listing_single_description */}
 
-            <div className="additional_details">
-                <div className="row">
-                    <div className="col-lg-12">
-                        <h4 className="mb15">Caractéristiques</h4>
-                    </div>
-                    <PropertyDetails />
-                </div>
+            {/* Characteristics */}
+            <div className="bg-white rounded-xl p-6 shadow-sm">
+                <h3 className="text-xl font-bold text-gray-900 mb-4">Caractéristiques</h3>
+                <PropertyDetails />
             </div>
-            {/* End .additional_details */}
 
             <GiftPersonalization />
 
-            <div className="application_statics mt30">
-                <h4 className="mb30">Informations de livraison</h4>
-                <div className="iba_container">
-                    <div className="iba_item d-flex align-items-center mb10">
-                        <span className="flaticon-tick text-primary me-2"></span>
-                        <span>{item?.location}</span>
-                    </div>
-                    <div className="iba_item d-flex align-items-center">
-                        <span className="flaticon-tick text-primary me-2"></span>
-                        <span>Délais estimé : 24h - 48h</span>
-                    </div>
-                </div>
+            {/* Delivery Info */}
+            <div className="bg-white rounded-xl p-6 shadow-sm">
+                <h3 className="text-xl font-bold text-gray-900 mb-4">Informations de livraison</h3>
+                <ul className="space-y-3">
+                    <li className="flex items-center gap-3 text-gray-700">
+                        <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                        {item?.location}
+                    </li>
+                    <li className="flex items-center gap-3 text-gray-700">
+                        <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                        Délais estimé : 24h - 48h
+                    </li>
+                </ul>
             </div>
-        </>
+        </div>
     );
 };
 

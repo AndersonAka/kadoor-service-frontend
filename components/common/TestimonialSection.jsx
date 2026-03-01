@@ -27,33 +27,21 @@ const TestimonialSection = () => {
     checkTestimonials();
   }, []);
 
-  // Ne rien afficher pendant le chargement ou s'il n'y a pas de témoignages
   if (loading || !hasTestimonials) {
     return null;
   }
 
   return (
-    <section id="our-testimonials" className="our-testimonial">
-      <div className="container">
-        <div className="row">
-          <div className="col-lg-6 offset-lg-3">
-            <div className="main-title text-center">
-              <h2>{t('testimonials_title')}</h2>
-              <p>{t('testimonials_subtitle')}</p>
-            </div>
-          </div>
+    <section id="testimonials" className="py-16 md:py-24 bg-white">
+      <div className="container-kadoor">
+        <div className="text-center mb-12">
+          <h2 className="section-title">{t('testimonials_title')}</h2>
+          <p className="section-subtitle max-w-2xl mx-auto">{t('testimonials_subtitle')}</p>
         </div>
-        {/* End .row */}
-        <div className="row">
-          <div className="col-lg-6 offset-lg-3">
-            <div className="testimonial_grid_slider">
-              <Testimonial />
-            </div>
-          </div>
+        <div className="max-w-3xl mx-auto">
+          <Testimonial />
         </div>
-        {/* End .row */}
       </div>
-      {/* End .container */}
     </section>
   );
 };

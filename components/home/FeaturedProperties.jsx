@@ -7,7 +7,7 @@ import { useTranslations } from 'next-intl';
 import { useState, useEffect } from "react";
 import { vehicleService } from "../../services/vehicleService";
 import { apartmentService } from "../../services/apartmentService";
-import { formatPrice } from "@/utils/currency";
+import { useCurrency } from "@/context/CurrencyContext";
 
 const FeaturedProperties = () => {
   const [activeTab, setActiveTab] = useState('vehicles'); // 'vehicles' or 'apartments'
@@ -20,6 +20,7 @@ const FeaturedProperties = () => {
   const tHome = useTranslations('HomePage');
   const tVehicles = useTranslations('Vehicles');
   const tNav = useTranslations('Navigation');
+  const { formatPrice } = useCurrency();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -151,191 +152,167 @@ const FeaturedProperties = () => {
   };
 
   return (
-    <>
-      <div className="row justify-content-center mb30">
-        <div className="col-auto">
-          <ul className="nav nav-pills custom_tab_list">
-            <li className="nav-item">
-              <button
-                className={`nav-link ${activeTab === 'vehicles' ? 'active' : ''}`}
-                onClick={() => setActiveTab('vehicles')}
-                style={{
-                  backgroundColor: activeTab === 'vehicles' ? 'var(--color-primary)' : 'transparent',
-                  color: activeTab === 'vehicles' ? '#fff' : '#333',
-                  border: '1px solid #ddd',
-                  marginRight: '10px',
-                  borderRadius: '30px',
-                  padding: '8px 25px'
-                }}
-              >
-                {tNav('vehicles')}
-              </button>
-            </li>
-            <li className="nav-item">
-              <button
-                className={`nav-link ${activeTab === 'apartments' ? 'active' : ''}`}
-                onClick={() => setActiveTab('apartments')}
-                style={{
-                  backgroundColor: activeTab === 'apartments' ? 'var(--color-primary)' : 'transparent',
-                  color: activeTab === 'apartments' ? '#fff' : '#333',
-                  border: '1px solid #ddd',
-                  borderRadius: '30px',
-                  padding: '8px 25px'
-                }}
-              >
-                {tNav('apartments')}
-              </button>
-            </li>
-          </ul>
+    <div>
+      {/* Tabs */}
+      <div className="flex justify-center mb-10">
+        <div className="inline-flex bg-gray-100  p-1">
+          <button
+            onClick={() => setActiveTab('vehicles')}
+            className={`flex items-center gap-2 px-6 py-2.5  font-medium transition-all ${
+              activeTab === 'vehicles'
+                ? 'text-white shadow-md'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+            style={activeTab === 'vehicles' ? { backgroundColor: '#c21c21ff' } : {}}
+          >
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
+            </svg>
+            {tNav('vehicles')}
+          </button>
+          <button
+            onClick={() => setActiveTab('apartments')}
+            className={`flex items-center gap-2 px-6 py-2.5  font-medium transition-all ${
+              activeTab === 'apartments'
+                ? 'text-white shadow-md'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+            style={activeTab === 'apartments' ? { backgroundColor: '#c21c21ff' } : {}}
+          >
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+            </svg>
+            {tNav('apartments')}
+          </button>
         </div>
       </div>
 
-      {loading ? (
-        <div className="row justify-content-center">
-          <div className="col-auto">
-            <div className="text-center py-5">
-              <div className="spinner-border text-primary" role="status">
-                <span className="visually-hidden">Chargement...</span>
-              </div>
-              <p className="mt-3">{getEmptyMessage()}</p>
-            </div>
-          </div>
+      {/* Loading State */}
+      {loading && (
+        <div className="flex flex-col items-center justify-center py-16">
+          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
+          <p className="text-gray-500">{getEmptyMessage()}</p>
         </div>
-      ) : currentData.length === 0 ? (
-        <div className="row justify-content-center">
-          <div className="col-lg-8 col-xl-6">
-            <div className="text-center py-5" style={{
-              background: '#f8f9fa',
-              borderRadius: '10px',
-              padding: '40px 20px'
-            }}>
-              <div style={{ fontSize: '48px', marginBottom: '20px' }}>📋</div>
-              <h4 style={{ color: '#333', marginBottom: '15px' }}>
-                {tHome('no_services_title') || 'Aucun service disponible'}
-              </h4>
-              <p style={{ color: '#666', fontSize: '16px', marginBottom: '20px' }}>
-                {getEmptyMessage()}
-              </p>
-              {error && (
-                <p style={{ color: '#b91c1c', fontSize: '14px', marginTop: '10px' }}>
-                  {error}
-                </p>
-              )}
-            </div>
-          </div>
+      )}
+
+      {/* Empty State */}
+      {!loading && currentData.length === 0 && (
+        <div className="max-w-md mx-auto text-center py-16 px-8 bg-white">
+          <div className="text-6xl mb-4">{activeTab === 'vehicles' ? '🚗' : '🏠'}</div>
+          <h4 className="text-xl font-semibold text-gray-900 mb-2">
+            {tHome('no_services_title') || 'Aucun service disponible'}
+          </h4>
+          <p className="text-gray-500 mb-4">{getEmptyMessage()}</p>
+          {error && <p className="text-red-600 text-sm">{error}</p>}
         </div>
-      ) : (
+      )}
+
+      {/* Properties Grid */}
+      {!loading && currentData.length > 0 && (
         <>
-          <Slider {...settings} arrows={false}>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {currentData?.slice(0, 6)?.map((item) => (
-          <div className="item" key={item.id}>
-            <div className="feat_property">
-              <div className="thumb" style={{ height: '220px', overflow: 'hidden' }}>
-                <Image
-                  width={343}
-                  height={220}
-                  className="img-whp w-100 h-100"
-                  src={item.img}
-                  alt={item.title}
-                  style={{ objectFit: 'cover', width: '100%', height: '100%' }}
-                />
-                <div className="thmb_cntnt">
-                  <ul className="tag mb0">
-                    {item.saleTag.map((val, i) => (
-                      <li className="list-inline-item" key={i}>
-                        <a href="#">{val}</a>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <Link
-                    href={activeTab === 'vehicles' ? `/vehicle-details/${item.id}` : `/apartment-details/${item.id}`}
-                    className="fp_price"
-                  >
-                    {formatPrice(item.price)}
-                    <small>{activeTab === 'vehicles' ? ` ${tVehicles('per_day')}` : ` /${t('month')}`}</small>
-                  </Link>
-                </div>
-              </div>
-
-              <div className="details">
-                <div className="tc_content">
-                  <p className="text-thm">{translateType(item.type)}</p>
-                  <h4>
-                    <Link href={activeTab === 'vehicles' ? `/vehicle-details/${item.id}` : `/apartment-details/${item.id}`}>
-                      {item.title}
-                    </Link>
-                  </h4>
-                  <p>
-                    <span className="flaticon-placeholder"></span>
-                    {item.location}
-                  </p>
-
-                  <ul className="prop_details mb0">
-                    {activeTab === 'vehicles' ? (
-                      <>
-                        <li className="list-inline-item">
-                          <a href="#">
-                            <span className="flaticon-settings mr5"></span>
-                            {item.transmission}
-                          </a>
-                        </li>
-                        <li className="list-inline-item">
-                          <a href="#">
-                            <span className="flaticon-oil mr5"></span>
-                            {item.fuel}
-                          </a>
-                        </li>
-                      </>
-                    ) : (
-                      item.itemDetails?.slice(0, 2).map((val, i) => (
-                        <li className="list-inline-item" key={i}>
-                          <a href="#">
-                            {translateDetailName(val.name)}: {val.number}
-                          </a>
-                        </li>
-                      ))
-                    )}
-                  </ul>
-                </div>
-
-                <div className="fp_footer">
-                  <ul className="fp_meta float-start mb0">
-                    <li className="list-inline-item">
-                      <Image
-                        width={40}
-                        height={40}
-                        src={item.posterAvatar || "/assets/images/property/pposter1.png"}
-                        alt="poster"
-                        className="rounded-circle"
-                      />
-                    </li>
-                    <li className="list-inline-item">
-                      <a href="#">{item.posterName}</a>
-                    </li>
-                  </ul>
-                  <div className="fp_pdate float-end">{item.postedYear}</div>
-                </div>
-              </div>
-            </div>
-          </div>
-            ))}
-          </Slider>
-
-          <div className="row justify-content-center mt30">
-            <div className="col-auto">
               <Link
-                href={activeTab === 'vehicles' ? '/vehicules' : '/apartments'}
-                className="btn btn-thm btn-lg rounded"
-                style={{ padding: '12px 35px' }}
+                key={item.id}
+                href={activeTab === 'vehicles' ? `/vehicle-details/${item.id}` : `/apartment-details/${item.id}`}
+                className="group"
               >
-                {tHome('view_more')}
+                <div className="bg-white overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 group-hover:-translate-y-1">
+                  {/* Image */}
+                  <div className="relative h-52 overflow-hidden">
+                    <Image
+                      src={item.img}
+                      alt={item.title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    {/* Tags */}
+                    <div className="absolute top-3 left-3 flex gap-2">
+                      {item.saleTag.map((tag, i) => (
+                        <span
+                          key={i}
+                          className={`px-3 py-1 text-xs font-semibold ${
+                            i === 0
+                              ? tag === 'Disponible' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+                              : 'bg-primary text-white'
+                          }`}
+                        >
+                          {translateTag(tag)}
+                        </span>
+                      ))}
+                    </div>
+                    {/* Price */}
+                    <div className="absolute bottom-3 right-3">
+                      <span className="px-4 py-2 bg-white/95 backdrop-blur-sm font-bold shadow-lg" style={{ color: '#c21c21ff' }}>
+                        {formatPrice(item.price)}
+                        <span className="text-sm font-normal text-gray-500">
+                          {activeTab === 'vehicles' ? `/${tVehicles('per_day')}` : `/${t('month')}`}
+                        </span>
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Content */}
+                  <div className="p-5">
+                    <p className="text-primary text-sm font-medium mb-1">{translateType(item.type)}</p>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-primary transition-colors line-clamp-1">
+                      {item.title}
+                    </h3>
+                    <p className="text-gray-500 text-sm flex items-center gap-1 mb-4">
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      </svg>
+                      {item.location}
+                    </p>
+
+                    {/* Features */}
+                    <div className="flex items-center gap-4 text-sm text-gray-600 border-t border-gray-100 pt-4">
+                      {activeTab === 'vehicles' ? (
+                        <>
+                          <span className="flex items-center gap-1">
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                            </svg>
+                            {item.transmission}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                            {item.fuel}
+                          </span>
+                        </>
+                      ) : (
+                        item.itemDetails?.slice(0, 3).map((val, i) => (
+                          <span key={i} className="flex items-center gap-1">
+                            {translateDetailName(val.name)}: {val.number}
+                          </span>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                </div>
               </Link>
-            </div>
+            ))}
+          </div>
+
+          {/* View More Button */}
+          <div className="text-center mt-10">
+            <Link
+              href={activeTab === 'vehicles' ? '/vehicles' : '/apartments'}
+              className="inline-flex items-center gap-2 px-8 py-3 text-white font-semibold transition-colors hover:opacity-90"
+              style={{ backgroundColor: '#c21c21ff' }}
+            >
+              {tHome('view_more')}
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </Link>
           </div>
         </>
       )}
-    </>
+    </div>
   );
 };
 

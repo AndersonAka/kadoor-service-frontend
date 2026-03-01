@@ -1,9 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react';
-import Header from "../../common/header/dashboard/Header";
-import SidebarMenu from "../../common/header/dashboard/SidebarMenu";
-import MobileMenu from "../../common/header/MobileMenu";
+import AdminLayout from '@/components/admin/AdminLayout';
 import adminService from '@/services/adminService';
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
@@ -65,227 +63,229 @@ const AdminReservations = () => {
     });
   };
 
-  const getStatusBadge = (status) => {
+  const getStatusConfig = (status) => {
     const statusMap = {
-      PENDING: { class: 'warning', text: t('status_pending') || 'En attente' },
-      CONFIRMED: { class: 'success', text: t('status_confirmed') || 'Confirmée' },
-      CANCELLED: { class: 'danger', text: t('status_cancelled') || 'Annulée' },
-      COMPLETED: { class: 'info', text: t('status_completed') || 'Terminée' },
+      PENDING: { color: 'bg-yellow-100 text-yellow-700', text: t('status_pending') || 'En attente' },
+      CONFIRMED: { color: 'bg-green-100 text-green-700', text: t('status_confirmed') || 'Confirmée' },
+      CANCELLED: { color: 'bg-red-100 text-red-700', text: t('status_cancelled') || 'Annulée' },
+      COMPLETED: { color: 'bg-blue-100 text-blue-700', text: t('status_completed') || 'Terminée' },
     };
-    const config = statusMap[status] || { class: 'secondary', text: status };
-    return (
-      <span className={`badge bg-${config.class}`}>
-        {config.text}
-      </span>
-    );
+    return statusMap[status] || { color: 'bg-gray-100 text-gray-700', text: status };
   };
 
   return (
-    <>
-      <Header />
-      <MobileMenu />
-
-      <div className="dashboard_sidebar_menu">
-        <div
-          className="offcanvas offcanvas-dashboard offcanvas-start"
-          tabIndex="-1"
-          id="DashboardOffcanvasMenu"
-          data-bs-scroll="true"
-        >
-          <SidebarMenu />
+    <AdminLayout title={t('reservations_management') || "Gestion des Réservations"}>
+      {/* Header Actions */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <div className="flex items-center gap-3">
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+          >
+            <option value="">{t('all_statuses') || "Tous les statuts"}</option>
+            <option value="PENDING">{t('status_pending') || "En attente"}</option>
+            <option value="CONFIRMED">{t('status_confirmed') || "Confirmée"}</option>
+            <option value="CANCELLED">{t('status_cancelled') || "Annulée"}</option>
+            <option value="COMPLETED">{t('status_completed') || "Terminée"}</option>
+          </select>
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary/10 text-primary">
+            {reservations.length} {t('reservations') || "réservations"}
+          </span>
         </div>
       </div>
 
-      <section className="our-dashbord dashbord bgc-f7 pb50">
-        <div className="container-fluid ovh">
-          <div className="row">
-            <div className="col-lg-12 maxw100flex-992">
-              <div className="row">
-                <div className="col-lg-12">
-                  <div className="dashboard_navigationbar dn db-1024">
-                    <div className="dropdown">
-                      <button
-                        className="dropbtn"
-                        data-bs-toggle="offcanvas"
-                        data-bs-target="#DashboardOffcanvasMenu"
-                        aria-controls="DashboardOffcanvasMenu"
-                      >
-                        <i className="fa fa-bars pr10"></i> Navigation
-                      </button>
-                    </div>
-                  </div>
-                </div>
+      {/* Error Alert */}
+      {error && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+          {error}
+        </div>
+      )}
 
-                <div className="col-lg-12">
-                  <div className="dashboard_navigationbar dn db-1024">
-                    <div className="dropdown">
-                      <button
-                        className="dropbtn"
-                        data-bs-toggle="offcanvas"
-                        data-bs-target="#DashboardOffcanvasMenu"
-                        aria-controls="DashboardOffcanvasMenu"
-                      >
-                        <i className="fa fa-bars pr10"></i> {t('navigation') || "Navigation"}
-                      </button>
-                    </div>
-                  </div>
-                </div>
+      {/* Table Card */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        {loading ? (
+          <div className="flex items-center justify-center py-20">
+            <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        ) : reservations.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-20 text-center">
+            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+              <svg className="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-1">{t('no_reservations') || "Aucune réservation"}</h3>
+            <p className="text-gray-500">{t('no_reservations_description') || "Aucune réservation trouvée"}</p>
+          </div>
+        ) : (
+          <>
+            {/* Desktop Table */}
+            <div className="hidden lg:block overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50 border-b border-gray-200">
+                  <tr>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">{t('client') || "Client"}</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">{t('service') || "Service"}</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">{t('period') || "Période"}</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">{t('amount') || "Montant"}</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">{t('status') || "Statut"}</th>
+                    <th className="px-6 py-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">{t('actions') || "Actions"}</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {reservations.map((reservation) => {
+                    const statusConfig = getStatusConfig(reservation.status);
+                    return (
+                      <tr key={reservation.id} className="hover:bg-gray-50 transition-colors">
+                        <td className="px-6 py-4">
+                          <div>
+                            <p className="font-medium text-gray-900">{reservation.user?.firstName} {reservation.user?.lastName}</p>
+                            <p className="text-sm text-gray-500">{reservation.user?.email}</p>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-2">
+                            {reservation.vehicle ? (
+                              <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
+                                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
+                                </svg>
+                                {t('vehicle') || "Véhicule"}
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-700">
+                                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                                </svg>
+                                {t('apartment') || "Appart."}
+                              </span>
+                            )}
+                            <span className="text-gray-900 font-medium truncate max-w-[150px]">
+                              {reservation.vehicle?.title || reservation.apartment?.title || 'N/A'}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-600">
+                          {formatDate(reservation.startDate)} → {formatDate(reservation.endDate)}
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className="font-semibold text-gray-900">{reservation.totalPrice?.toLocaleString('fr-FR')}</span>
+                          <span className="text-gray-500 text-sm"> FCFA</span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${statusConfig.color}`}>
+                            {statusConfig.text}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center justify-end gap-2">
+                            <Link 
+                              href={{ pathname: '/admin/reservations/[id]', params: { id: reservation.id } }} 
+                              className="p-2 text-gray-500 hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                              title={t('view_details') || "Détails"}
+                            >
+                              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                              </svg>
+                            </Link>
+                            {reservation.status === 'PENDING' && (
+                              <>
+                                <button
+                                  onClick={() => handleStatusChange(reservation.id, 'CONFIRMED')}
+                                  className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                                  title={t('confirm') || "Confirmer"}
+                                >
+                                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                  </svg>
+                                </button>
+                                <button
+                                  onClick={() => handleStatusChange(reservation.id, 'CANCELLED')}
+                                  className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                  title={t('cancel') || "Annuler"}
+                                >
+                                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                  </svg>
+                                </button>
+                              </>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
 
-                <div className="col-lg-12 mb10">
-                  <div className="breadcrumb_content style2">
-                    <h2 className="breadcrumb_title">{t('reservations_management') || "Gestion des Réservations"}</h2>
-                    <div className="d-flex align-items-center gap-3">
-                      <select
-                        value={statusFilter}
-                        onChange={(e) => setStatusFilter(e.target.value)}
-                        className="form-select"
-                        style={{ width: 'auto', display: 'inline-block' }}
-                      >
-                        <option value="">{t('all_statuses') || "Tous les statuts"}</option>
-                        <option value="PENDING">{t('status_pending') || "En attente"}</option>
-                        <option value="CONFIRMED">{t('status_confirmed') || "Confirmée"}</option>
-                        <option value="CANCELLED">{t('status_cancelled') || "Annulée"}</option>
-                        <option value="COMPLETED">{t('status_completed') || "Terminée"}</option>
-                      </select>
-                      <span className="badge bg-primary">
-                        {reservations.length} {t('reservations') || "réservations"}
+            {/* Mobile Cards */}
+            <div className="lg:hidden divide-y divide-gray-200">
+              {reservations.map((reservation) => {
+                const statusConfig = getStatusConfig(reservation.status);
+                return (
+                  <div key={reservation.id} className="p-4">
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <p className="font-medium text-gray-900">{reservation.user?.firstName} {reservation.user?.lastName}</p>
+                        <p className="text-sm text-gray-500">{reservation.user?.email}</p>
+                      </div>
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${statusConfig.color}`}>
+                        {statusConfig.text}
                       </span>
                     </div>
-                  </div>
-                </div>
-
-                {error && (
-                  <div className="col-lg-12 mb-3">
-                    <div className="alert alert-danger" role="alert">
-                      {error}
+                    <div className="flex items-center gap-2 mb-2">
+                      {reservation.vehicle ? (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
+                          🚗 {t('vehicle') || "Véhicule"}
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-700">
+                          🏠 {t('apartment') || "Appart."}
+                        </span>
+                      )}
+                      <span className="text-gray-700 text-sm truncate">
+                        {reservation.vehicle?.title || reservation.apartment?.title}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm mb-3">
+                      <span className="text-gray-500">{formatDate(reservation.startDate)} → {formatDate(reservation.endDate)}</span>
+                      <span className="font-semibold text-primary">{reservation.totalPrice?.toLocaleString('fr-FR')} FCFA</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Link 
+                        href={{ pathname: '/admin/reservations/[id]', params: { id: reservation.id } }} 
+                        className="flex-1 text-center px-3 py-2 text-sm font-medium text-primary bg-primary/10 rounded-lg hover:bg-primary/20 transition-colors"
+                      >
+                        {t('view_details') || "Détails"}
+                      </Link>
+                      {reservation.status === 'PENDING' && (
+                        <>
+                          <button
+                            onClick={() => handleStatusChange(reservation.id, 'CONFIRMED')}
+                            className="px-3 py-2 text-sm font-medium text-green-600 bg-green-50 rounded-lg hover:bg-green-100 transition-colors"
+                          >
+                            ✓
+                          </button>
+                          <button
+                            onClick={() => handleStatusChange(reservation.id, 'CANCELLED')}
+                            className="px-3 py-2 text-sm font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors"
+                          >
+                            ✗
+                          </button>
+                        </>
+                      )}
                     </div>
                   </div>
-                )}
-
-                <div className="col-lg-12">
-                  <div className="my_dashboard_review mb40">
-                    <div className="property_table">
-                      <div className="table-responsive mt0">
-                        <table className="table">
-                          <thead className="thead-light">
-                            <tr>
-                              <th scope="col">{t('client') || "Client"}</th>
-                              <th scope="col">{t('service_category') || "Catégorie"}</th>
-                              <th scope="col">{t('service') || "Service"}</th>
-                              <th scope="col">{t('period') || "Période"}</th>
-                              <th scope="col">{t('amount') || "Montant"}</th>
-                              <th scope="col">{t('status') || "Statut"}</th>
-                              <th scope="col">{t('actions') || "Actions"}</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {loading ? (
-                              <tr>
-                                <td colSpan="7" className="text-center">
-                                  <div className="spinner-border text-primary" role="status">
-                                    <span className="visually-hidden">{t('loading') || "Chargement..."}</span>
-                                  </div>
-                                </td>
-                              </tr>
-                            ) : reservations.length === 0 ? (
-                              <tr>
-                                <td colSpan="7" className="text-center">
-                                  <i className="fa fa-calendar-times-o" style={{ fontSize: '48px', color: '#ccc', marginBottom: '10px' }}></i>
-                                  <p>{t('no_reservations') || "Aucune réservation"}</p>
-                                </td>
-                              </tr>
-                            ) : (
-                              reservations.map((reservation) => (
-                                <tr key={reservation.id}>
-                                  <td>
-                                    <div>
-                                      <strong>{reservation.user?.firstName} {reservation.user?.lastName}</strong>
-                                      <br />
-                                      <small className="text-muted">{reservation.user?.email}</small>
-                                    </div>
-                                  </td>
-                                  <td>
-                                    {reservation.vehicle ? (
-                                      <span className="badge bg-info">
-                                        <i className="fa fa-car me-1"></i>
-                                        {t('vehicle') || "Véhicule"}
-                                      </span>
-                                    ) : reservation.apartment ? (
-                                      <span className="badge bg-success">
-                                        <i className="fa fa-home me-1"></i>
-                                        {t('apartment') || "Appartement"}
-                                      </span>
-                                    ) : (
-                                      <span className="badge bg-secondary">N/A</span>
-                                    )}
-                                  </td>
-                                  <td>
-                                    {reservation.vehicle ? (
-                                      <span>
-                                        <i className="fa fa-car me-2"></i>
-                                        {reservation.vehicle.title}
-                                      </span>
-                                    ) : reservation.apartment ? (
-                                      <span>
-                                        <i className="fa fa-home me-2"></i>
-                                        {reservation.apartment.title}
-                                      </span>
-                                    ) : (
-                                      'N/A'
-                                    )}
-                                  </td>
-                                  <td>
-                                    {formatDate(reservation.startDate)} → {formatDate(reservation.endDate)}
-                                  </td>
-                                  <td>{reservation.totalPrice?.toLocaleString('fr-FR')} FCFA</td>
-                                  <td>{getStatusBadge(reservation.status)}</td>
-                                  <td>
-                                    <div className="d-flex gap-2">
-                                      <Link 
-                                        href={{ 
-                                          pathname: '/admin/reservations/[id]', 
-                                          params: { id: reservation.id } 
-                                        }} 
-                                        className="btn btn-sm btn-primary"
-                                      >
-                                        <i className="fa fa-eye me-1"></i>
-                                        {t('view_details') || "Détails"}
-                                      </Link>
-                                      {reservation.status === 'PENDING' && (
-                                        <>
-                                          <button
-                                            onClick={() => handleStatusChange(reservation.id, 'CONFIRMED')}
-                                            className="btn btn-sm btn-success"
-                                            title={t('confirm') || "Confirmer"}
-                                          >
-                                            <i className="fa fa-check"></i>
-                                          </button>
-                                          <button
-                                            onClick={() => handleStatusChange(reservation.id, 'CANCELLED')}
-                                            className="btn btn-sm btn-danger"
-                                            title={t('cancel') || "Annuler"}
-                                          >
-                                            <i className="fa fa-times"></i>
-                                          </button>
-                                        </>
-                                      )}
-                                    </div>
-                                  </td>
-                                </tr>
-                              ))
-                            )}
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+                );
+              })}
             </div>
-          </div>
-        </div>
-      </section>
-    </>
+          </>
+        )}
+      </div>
+    </AdminLayout>
   );
 };
 

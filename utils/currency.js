@@ -1,20 +1,31 @@
+const CURRENCIES = {
+  EUR: { symbol: '€', position: 'after', locale: 'fr-FR' },
+  USD: { symbol: '$', position: 'before', locale: 'en-US' },
+  FCFA: { symbol: 'FCFA', position: 'after', locale: 'fr-FR' },
+};
+
+const DEFAULT_CURRENCY = 'FCFA';
+
 /**
- * Formate un montant en FCFA
+ * Formate un montant avec devise
  * @param {number} amount - Le montant à formater
  * @param {Object} options - Options de formatage
  * @param {boolean} options.showCurrency - Afficher la devise (défaut: true)
- * @param {boolean} options.useSpace - Utiliser un espace entre le montant et la devise (défaut: true)
- * @returns {string} Le montant formaté en FCFA
+ * @param {string} options.currency - Code devise: 'EUR', 'USD', 'FCFA' (défaut: EUR)
+ * @returns {string} Le montant formaté
  */
 export const formatPrice = (amount, options = {}) => {
-  const { showCurrency = true, useSpace = true } = options;
+  const { showCurrency = true, currency = DEFAULT_CURRENCY } = options;
   
   if (amount === null || amount === undefined || isNaN(amount)) {
-    return showCurrency ? (useSpace ? '0 FCFA' : '0FCFA') : '0';
+    return showCurrency ? `0 ${CURRENCIES[currency]?.symbol || '€'}` : '0';
   }
 
+  const numAmount = Math.round(Number(amount));
+  const curr = CURRENCIES[currency] || CURRENCIES.EUR;
+
   // Formater le nombre avec des espaces comme séparateurs de milliers
-  const formattedAmount = Math.round(Number(amount))
+  const formattedAmount = numAmount
     .toString()
     .replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
 
@@ -22,7 +33,10 @@ export const formatPrice = (amount, options = {}) => {
     return formattedAmount;
   }
 
-  return useSpace ? `${formattedAmount} FCFA` : `${formattedAmount}FCFA`;
+  if (curr.position === 'before') {
+    return `${curr.symbol}${formattedAmount}`;
+  }
+  return `${formattedAmount} ${curr.symbol}`;
 };
 
 /**

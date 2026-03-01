@@ -15,7 +15,6 @@ const VehicleForm = ({ vehicle = null }) => {
     type: vehicle?.type || '',
     make: vehicle?.make || '',
     model: vehicle?.model || '',
-    year: vehicle?.year || '',
     fuel: vehicle?.fuel || '',
     transmission: vehicle?.transmission || '',
     seats: vehicle?.seats || '',
@@ -34,18 +33,6 @@ const VehicleForm = ({ vehicle = null }) => {
     }));
   };
 
-  const handleFeatureChange = (e) => {
-    const { value, checked } = e.target;
-    setFormData(prev => {
-      const features = prev.features || [];
-      if (checked) {
-        return { ...prev, features: [...features, value] };
-      } else {
-        return { ...prev, features: features.filter(f => f !== value) };
-      }
-    });
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -55,7 +42,6 @@ const VehicleForm = ({ vehicle = null }) => {
       const data = {
         ...formData,
         pricePerDay: parseFloat(formData.pricePerDay),
-        year: formData.year ? parseInt(formData.year) : undefined,
         seats: formData.seats ? parseInt(formData.seats) : undefined,
       };
 
@@ -76,208 +62,206 @@ const VehicleForm = ({ vehicle = null }) => {
     }
   };
 
+  const inputClass = "w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors";
+  const labelClass = "block text-sm font-medium text-gray-700 mb-1.5";
+
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="space-y-6">
       {error && (
-        <div className="col-lg-12 mb-3">
-          <div className="alert alert-danger" role="alert">
-            {error}
-          </div>
+        <div className="p-4 bg-red-50 text-red-700 border border-red-200 rounded-lg">
+          {error}
         </div>
       )}
 
-      <div className="row">
-        <div className="col-lg-6">
-          <div className="my_profile_setting_input form-group">
-            <label>{t('title') || "Titre"} *</label>
-            <input
-              type="text"
-              className="form-control"
-              name="title"
-              value={formData.title}
-              onChange={handleChange}
-              required
-            />
-          </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Title */}
+        <div>
+          <label className={labelClass}>{t('title') || "Titre"} *</label>
+          <input
+            type="text"
+            className={inputClass}
+            name="title"
+            value={formData.title}
+            onChange={handleChange}
+            required
+            placeholder="Ex: Toyota Corolla 2023"
+          />
         </div>
 
-        <div className="col-lg-6">
-          <div className="my_profile_setting_input form-group">
-            <label>{t('type') || "Type"} *</label>
-            <select className="form-control" name="type" value={formData.type} onChange={handleChange} required>
-              <option value="">{t('select_type') || "Sélectionner un type"}</option>
-              <option value="Berline">Berline</option>
-              <option value="SUV">SUV</option>
-              <option value="Utilitaire">Utilitaire</option>
-              <option value="Luxe">Luxe</option>
-            </select>
-          </div>
+        {/* Type */}
+        <div>
+          <label className={labelClass}>{t('type') || "Type"} *</label>
+          <select 
+            className={inputClass} 
+            name="type" 
+            value={formData.type} 
+            onChange={handleChange} 
+            required
+          >
+            <option value="">{t('select_type') || "Sélectionner un type"}</option>
+            <option value="Berline">Berline</option>
+            <option value="SUV">SUV</option>
+            <option value="Utilitaire">Utilitaire</option>
+            <option value="Fourgonnette">Fourgonnette</option>
+            <option value="Luxe">Luxe</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Description */}
+      <div>
+        <label className={labelClass}>{t('description') || "Description"} *</label>
+        <textarea
+          className={inputClass}
+          name="description"
+          rows="4"
+          value={formData.description}
+          onChange={handleChange}
+          required
+          placeholder="Description du véhicule..."
+        />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Make */}
+        <div>
+          <label className={labelClass}>{t('make') || "Marque"}</label>
+          <input
+            type="text"
+            className={inputClass}
+            name="make"
+            value={formData.make}
+            onChange={handleChange}
+            placeholder="Ex: Toyota"
+          />
         </div>
 
-        <div className="col-lg-12">
-          <div className="my_profile_setting_input form-group">
-            <label>{t('description') || "Description"} *</label>
-            <textarea
-              className="form-control"
-              name="description"
-              rows="4"
-              value={formData.description}
-              onChange={handleChange}
-              required
-            />
-          </div>
+        {/* Model */}
+        <div>
+          <label className={labelClass}>{t('model') || "Modèle"}</label>
+          <input
+            type="text"
+            className={inputClass}
+            name="model"
+            value={formData.model}
+            onChange={handleChange}
+            placeholder="Ex: Corolla"
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Fuel */}
+        <div>
+          <label className={labelClass}>{t('fuel') || "Carburant"}</label>
+          <select className={inputClass} name="fuel" value={formData.fuel} onChange={handleChange}>
+            <option value="">{t('select') || "Sélectionner"}</option>
+            <option value="Essence">Essence</option>
+            <option value="Diesel">Diesel</option>
+            <option value="Électrique">Électrique</option>
+            <option value="Hybride">Hybride</option>
+          </select>
         </div>
 
-        <div className="col-lg-6">
-          <div className="my_profile_setting_input form-group">
-            <label>{t('make') || "Marque"}</label>
-            <input
-              type="text"
-              className="form-control"
-              name="make"
-              value={formData.make}
-              onChange={handleChange}
-            />
-          </div>
+        {/* Transmission */}
+        <div>
+          <label className={labelClass}>{t('transmission') || "Transmission"}</label>
+          <select className={inputClass} name="transmission" value={formData.transmission} onChange={handleChange}>
+            <option value="">{t('select') || "Sélectionner"}</option>
+            <option value="Manuelle">Manuelle</option>
+            <option value="Automatique">Automatique</option>
+          </select>
         </div>
 
-        <div className="col-lg-6">
-          <div className="my_profile_setting_input form-group">
-            <label>{t('model') || "Modèle"}</label>
-            <input
-              type="text"
-              className="form-control"
-              name="model"
-              value={formData.model}
-              onChange={handleChange}
-            />
-          </div>
+        {/* Seats */}
+        <div>
+          <label className={labelClass}>{t('seats') || "Places"}</label>
+          <input
+            type="number"
+            className={inputClass}
+            name="seats"
+            value={formData.seats}
+            onChange={handleChange}
+            min="1"
+            max="50"
+            placeholder="Ex: 5"
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Location */}
+        <div>
+          <label className={labelClass}>{t('location') || "Localisation"}</label>
+          <input
+            type="text"
+            className={inputClass}
+            name="location"
+            value={formData.location}
+            onChange={handleChange}
+            placeholder="Ex: Abidjan, Cocody"
+          />
         </div>
 
-        <div className="col-lg-4">
-          <div className="my_profile_setting_input form-group">
-            <label>{t('year') || "Année"}</label>
-            <input
-              type="number"
-              className="form-control"
-              name="year"
-              value={formData.year}
-              onChange={handleChange}
-              min="1900"
-              max={new Date().getFullYear() + 1}
-            />
-          </div>
+        {/* Price per day */}
+        <div>
+          <label className={labelClass}>{t('price_per_day') || "Prix/jour (FCFA)"} *</label>
+          <input
+            type="number"
+            className={inputClass}
+            name="pricePerDay"
+            value={formData.pricePerDay}
+            onChange={handleChange}
+            required
+            min="0"
+            placeholder="Ex: 25000"
+          />
         </div>
+      </div>
 
-        <div className="col-lg-4">
-          <div className="my_profile_setting_input form-group">
-            <label>{t('fuel') || "Carburant"}</label>
-            <select className="form-control" name="fuel" value={formData.fuel} onChange={handleChange}>
-              <option value="">{t('select') || "Sélectionner"}</option>
-              <option value="Essence">Essence</option>
-              <option value="Diesel">Diesel</option>
-              <option value="Électrique">Électrique</option>
-              <option value="Hybride">Hybride</option>
-            </select>
-          </div>
-        </div>
+      {/* Available checkbox */}
+      <div className="flex items-center gap-3">
+        <input
+          type="checkbox"
+          name="isAvailable"
+          id="isAvailable"
+          checked={formData.isAvailable}
+          onChange={handleChange}
+          className="w-5 h-5 text-primary border-gray-300 rounded focus:ring-primary"
+        />
+        <label htmlFor="isAvailable" className="text-sm font-medium text-gray-700">
+          {t('available') || "Disponible à la location"}
+        </label>
+      </div>
 
-        <div className="col-lg-4">
-          <div className="my_profile_setting_input form-group">
-            <label>{t('transmission') || "Transmission"}</label>
-            <select className="form-control" name="transmission" value={formData.transmission} onChange={handleChange}>
-              <option value="">{t('select') || "Sélectionner"}</option>
-              <option value="Manuelle">Manuelle</option>
-              <option value="Automatique">Automatique</option>
-            </select>
-          </div>
-        </div>
-
-        <div className="col-lg-4">
-          <div className="my_profile_setting_input form-group">
-            <label>{t('seats') || "Places"}</label>
-            <input
-              type="number"
-              className="form-control"
-              name="seats"
-              value={formData.seats}
-              onChange={handleChange}
-              min="1"
-              max="50"
-            />
-          </div>
-        </div>
-
-        <div className="col-lg-4">
-          <div className="my_profile_setting_input form-group">
-            <label>{t('location') || "Localisation"}</label>
-            <input
-              type="text"
-              className="form-control"
-              name="location"
-              value={formData.location}
-              onChange={handleChange}
-            />
-          </div>
-        </div>
-
-        <div className="col-lg-4">
-          <div className="my_profile_setting_input form-group">
-            <label>{t('price_per_day') || "Prix/jour (FCFA)"} *</label>
-            <input
-              type="number"
-              className="form-control"
-              name="pricePerDay"
-              value={formData.pricePerDay}
-              onChange={handleChange}
-              required
-              min="0"
-            />
-          </div>
-        </div>
-
-        <div className="col-lg-12">
-          <div className="my_profile_setting_input form-group">
-            <div className="form-check">
-              <input
-                className="form-check-input"
-                type="checkbox"
-                name="isAvailable"
-                id="isAvailable"
-                checked={formData.isAvailable}
-                onChange={handleChange}
-              />
-              <label className="form-check-label" htmlFor="isAvailable">
-                {t('available') || "Disponible"}
-              </label>
-            </div>
-          </div>
-        </div>
-
-        <div className="col-lg-12">
-          <div className="my_profile_setting_input">
-            <button type="submit" className="btn btn-thm" disabled={saving}>
-              {saving ? (
-                <>
-                  <span className="spinner-border spinner-border-sm me-2" role="status"></span>
-                  {t('saving') || "Enregistrement..."}
-                </>
-              ) : (
-                <>
-                  <i className="fa fa-save me-2"></i>
-                  {vehicle ? (t('update') || "Mettre à jour") : (t('create') || "Créer")}
-                </>
-              )}
-            </button>
-            <button
-              type="button"
-              className="btn btn-thm-outline ms-2"
-              onClick={() => router.push('/admin/vehicles')}
-            >
-              {t('cancel') || "Annuler"}
-            </button>
-          </div>
-        </div>
+      {/* Actions */}
+      <div className="flex items-center gap-4 pt-4 border-t border-gray-200">
+        <button 
+          type="submit" 
+          className="inline-flex items-center gap-2 px-6 py-2.5 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50"
+          disabled={saving}
+        >
+          {saving ? (
+            <>
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              {t('saving') || "Enregistrement..."}
+            </>
+          ) : (
+            <>
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              {vehicle ? (t('update') || "Mettre à jour") : (t('create') || "Créer")}
+            </>
+          )}
+        </button>
+        <button
+          type="button"
+          className="px-6 py-2.5 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
+          onClick={() => router.push('/admin/vehicles')}
+        >
+          {t('cancel') || "Annuler"}
+        </button>
       </div>
     </form>
   );

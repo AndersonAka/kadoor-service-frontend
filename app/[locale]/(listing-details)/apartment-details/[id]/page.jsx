@@ -1,9 +1,7 @@
 
 import "photoswipe/dist/photoswipe.css";
-import CopyrightFooter from "@/components/common/footer/CopyrightFooter";
-import Footer from "@/components/common/footer/Footer";
-import Header from "@/components/common/header/DefaultHeader";
-import MobileMenu from "@/components/common/header/MobileMenu";
+import HeaderTailwind from "@/components/common/header/HeaderTailwind";
+import FooterTailwind from "@/components/common/footer/FooterTailwind";
 import PopupSignInUp from "@/components/common/PopupSignInUp";
 import ApartmentDetailsContent from "@/components/listing-details-v1/ApartmentDetailsContent";
 import Sidebar from "@/components/listing-details-v1/Sidebar";
@@ -79,65 +77,39 @@ const ListingDynamicDetailsV2 = async props => {
 
   return (
     <>
-      {/* <!-- Main Header Nav --> */}
-      <Header />
-
-      {/* <!--  Mobile Menu --> */}
-      <MobileMenu />
-
-      {/* <!-- Modal --> */}
+      <HeaderTailwind />
       <PopupSignInUp />
 
-      {/* <!-- Listing Single Property --> */}
-      <ListingOne property={property} />
+      <div className="pt-20">
+        <ListingOne property={property} />
+      </div>
 
-      {/* Track recently viewed */}
       <RecentlyViewedTracker itemId={id} itemType="apartment" />
 
-      {/* <!-- Agent Single Grid View --> */}
-      <section className="our-agent-single bgc-f7 pb30-991">
-        <div className="container">
-          <div className="row">
-            <div className="col-md-12 col-lg-8">
+      <section className="py-12 bg-gray-50">
+        <div className="container-kadoor">
+          <div className="flex flex-col lg:flex-row gap-8">
+            <div className="flex-1">
               <ApartmentDetailsContent item={property} />
             </div>
-            {/* End details content .col-lg-8 */}
-
-            <div className="col-lg-4 col-xl-4">
-              <Sidebar itemId={id} itemType="apartment" itemData={property} />
+            <div className="w-full lg:w-96 flex-shrink-0">
+              <div className="sticky top-24">
+                <Sidebar itemId={id} itemType="apartment" itemData={property} />
+              </div>
             </div>
-            {/* End sidebar content .col-lg-4 */}
           </div>
-          {/* End .row */}
           
-          {/* Section Commentaires - Déplacée après le bouton Réserver */}
-          <div className="row mt50">
-            <div className="col-lg-12">
-              <CommentsSection 
-                itemId={id} 
-                itemType="apartment"
-                itemTitle={property.title}
-              />
-            </div>
+          <div className="mt-12">
+            <CommentsSection 
+              itemId={id} 
+              itemType="apartment"
+              itemTitle={property.title}
+            />
           </div>
         </div>
       </section>
 
-      {/* <!-- Our Footer --> */}
-      <section className="footer_one bgc-dark8">
-        <div className="container">
-          <div className="row">
-            <Footer />
-          </div>
-        </div>
-      </section>
-
-      {/* <!-- Our Footer Bottom Area --> */}
-      <section className="footer_middle_area pt40 pb40 bgc-dark8 border-top-dark">
-        <div className="container">
-          <CopyrightFooter />
-        </div>
-      </section>
+      <FooterTailwind />
     </>
   );
 };

@@ -1,16 +1,18 @@
-import ListV1 from "@/components/listing-list/list-v1";
+import GiftsListing from "@/components/listings/GiftsListing";
+import { getTranslations } from "next-intl/server";
 
-export const metadata = {
-  title: "Simple Listing – List V1 || FindHouse - Real Estate React Template",
-  description: "FindHouse - Real Estate React Template",
+export async function generateMetadata({ params }) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'GiftsPage' });
+  
+  return {
+    title: `${t('page_title') || 'Chèques Cadeaux'} | KADOOR SERVICE`,
+    description: t('hero_description') || 'Offrez une expérience unique',
+  };
+}
+
+const GiftsPage = () => {
+  return <GiftsListing />;
 };
 
-const index = () => {
-  return (
-    <>
-      <GridV2 dataType="gifts" />
-    </>
-  );
-};
-
-export default index;
+export default GiftsPage;

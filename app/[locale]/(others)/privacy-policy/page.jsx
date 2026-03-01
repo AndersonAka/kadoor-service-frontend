@@ -1,10 +1,6 @@
-import CallToAction from "@/components/common/CallToAction";
-import CopyrightFooter from "@/components/common/footer/CopyrightFooter";
-import Footer from "@/components/common/footer/Footer";
-import Header from "@/components/home-10/Header";
-import MobileMenu from "@/components/common/header/MobileMenu";
+import HeaderTailwind from "@/components/common/header/HeaderTailwind";
+import FooterTailwind from "@/components/common/footer/FooterTailwind";
 import PopupSignInUp from "@/components/common/PopupSignInUp";
-import BreadCrumbBanner from "@/components/privacy-policy/BreadCrumbBanner";
 import PrivacyPolicyContent from "@/components/privacy-policy/PrivacyPolicyContent";
 
 export const metadata = {
@@ -15,47 +11,25 @@ export const metadata = {
 const PrivacyPolicyPage = () => {
   return (
     <>
-      {/* <!-- Main Header Nav --> */}
-      <Header />
-
-      {/* <!--  Mobile Menu --> */}
-      <MobileMenu />
-
-      {/* <!-- Modal --> */}
+      <HeaderTailwind />
       <PopupSignInUp />
 
-      {/* <!-- Inner Page Breadcrumb --> */}
-      <BreadCrumbBanner title="Politique de Confidentialité" />
+      {/* Hero */}
+      <section className="pt-28 pb-12 bg-gradient-to-br from-gray-900 via-gray-800 to-primary/20">
+        <div className="container-kadoor text-center">
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Politique de Confidentialité</h1>
+          <p className="text-xl text-gray-300 max-w-2xl mx-auto">Protection de vos données personnelles</p>
+        </div>
+      </section>
 
-      {/* <!-- Privacy Policy Content --> */}
-      <section className="our-terms bgc-f7">
-        <div className="container">
+      {/* Content */}
+      <section className="py-16 bg-gray-50">
+        <div className="container-kadoor">
           <PrivacyPolicyContent />
         </div>
       </section>
 
-      {/* <!-- Start Call to Action --> */}
-      <section className="start-partners bgc-thm pt50 pb50">
-        <div className="container">
-          <CallToAction />
-        </div>
-      </section>
-
-      {/* <!-- Our Footer --> */}
-      <section className="footer_one bgc-dark8">
-        <div className="container">
-          <div className="row">
-            <Footer />
-          </div>
-        </div>
-      </section>
-
-      {/* <!-- Our Footer Bottom Area --> */}
-      <section className="footer_middle_area pt40 pb40 bgc-dark8 border-top-dark">
-        <div className="container">
-          <CopyrightFooter />
-        </div>
-      </section>
+      <FooterTailwind />
     </>
   );
 };

@@ -1,80 +1,53 @@
 'use client'
 
-import CopyrightFooter from "../common/footer/CopyrightFooter";
-import Footer from "../common/footer/Footer";
-import Header from "../home-10/Header";
-import MobileMenu from "../common/header/MobileMenu";
+import HeaderTailwind from "../common/header/HeaderTailwind";
+import FooterTailwind from "../common/footer/FooterTailwind";
 import PopupSignInUp from "../common/PopupSignInUp";
-import BreadCrumbBanner from "./BreadCrumbBanner";
 import Form from "./Form";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import BreadCrumb from "../common/BreadCrumb";
 
 const index = () => {
   const t = useTranslations('LoginPage');
 
   return (
     <>
-      {/* <!-- Main Header Nav --> */}
-      <Header />
-
-      {/* <!--  Mobile Menu --> */}
-      <MobileMenu />
-
-      {/* <!-- Modal --> */}
+      <HeaderTailwind />
       <PopupSignInUp />
 
-      {/* <!-- Inner Page Breadcrumb --> */}
-      <BreadCrumb title={t("page_title")} />
-      {/* <BreadCrumbBanner /> */}
-
-      {/* <!-- Our LogIn Register --> */}
-      <section className="our-log bgc-fa">
-        <div className="container">
-          <div className="row align-items-center">
-            {/* Image illustrative */}
-            <div className="col-lg-6 col-xl-6 d-none d-lg-block">
-              <div className="login_thumb">
+      {/* Login Section */}
+      <section className="pt-28 pb-16 min-h-screen bg-gray-50">
+        <div className="container-kadoor">
+          <div className="flex flex-col lg:flex-row items-center gap-12 max-w-5xl mx-auto">
+            {/* Image */}
+            <div className="hidden lg:block flex-1">
+              <div className="relative h-[550px] rounded-2xl overflow-hidden shadow-xl">
                 <Image
                   src="/assets/images/resource/login-img.png"
                   alt={t("image_alt") || "Connexion"}
-                  width={600}
-                  height={800}
-                  className="img-fluid w-100 h-100"
-                  style={{ objectFit: 'cover', borderRadius: '12px' }}
+                  fill
+                  className="object-cover"
                   priority
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                <div className="absolute bottom-8 left-8 right-8 text-white">
+                  <h2 className="text-2xl font-bold mb-2">KADOOR SERVICE</h2>
+                  <p className="text-white/80">Votre partenaire de confiance pour la location premium</p>
+                </div>
               </div>
             </div>
-            {/* End image column */}
 
-            {/* Formulaire */}
-            <div className="col-sm-12 col-lg-6 col-xl-6">
-              <div className="login_form inner_page">
+            {/* Form */}
+            <div className="w-full lg:flex-1">
+              <div className="bg-white rounded-2xl shadow-lg p-8 md:p-10">
                 <Form />
               </div>
             </div>
-            {/* End form column */}
           </div>
         </div>
       </section>
 
-      {/* <!-- Our Footer --> */}
-      <section className="footer_one">
-        <div className="container">
-          <div className="row">
-            <Footer />
-          </div>
-        </div>
-      </section>
-
-      {/* <!-- Our Footer Bottom Area --> */}
-      <section className="footer_middle_area pt40 pb40">
-        <div className="container">
-          <CopyrightFooter />
-        </div>
-      </section>
+      <FooterTailwind />
     </>
   );
 };

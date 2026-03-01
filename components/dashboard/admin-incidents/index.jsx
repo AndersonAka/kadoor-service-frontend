@@ -1,11 +1,10 @@
 'use client'
 
 import { useEffect, useState } from 'react';
-import Header from "../../common/header/dashboard/Header";
-import SidebarMenu from "../../common/header/dashboard/SidebarMenu";
-import MobileMenu from "../../common/header/MobileMenu";
+import AdminLayout from '@/components/admin/AdminLayout';
 import adminService from '@/services/adminService';
 import { useTranslations } from "next-intl";
+import Image from 'next/image';
 
 const AdminIncidents = () => {
   const [incidents, setIncidents] = useState([]);
@@ -59,19 +58,25 @@ const AdminIncidents = () => {
     });
   };
 
-  const getStatusBadge = (status) => {
+  const getStatusConfig = (status) => {
     const statusMap = {
-      PENDING: { class: 'warning', text: t('status_pending') || 'En attente' },
-      IN_PROGRESS: { class: 'info', text: t('status_in_progress') || 'En cours' },
-      RESOLVED: { class: 'success', text: t('status_resolved') || 'Résolu' },
-      CLOSED: { class: 'secondary', text: t('status_closed') || 'Fermé' },
+      PENDING: { color: 'bg-yellow-100 text-yellow-700', text: t('status_pending') || 'En attente' },
+      IN_PROGRESS: { color: 'bg-blue-100 text-blue-700', text: t('status_in_progress') || 'En cours' },
+      RESOLVED: { color: 'bg-green-100 text-green-700', text: t('status_resolved') || 'Résolu' },
+      CLOSED: { color: 'bg-gray-100 text-gray-700', text: t('status_closed') || 'Fermé' },
     };
-    const config = statusMap[status] || { class: 'secondary', text: status };
-    return (
-      <span className={`badge bg-${config.class}`}>
-        {config.text}
-      </span>
-    );
+    return statusMap[status] || { color: 'bg-gray-100 text-gray-700', text: status };
+  };
+
+  const getTypeConfig = (type) => {
+    const typeMap = {
+      ACCIDENT: { color: 'bg-red-100 text-red-700', icon: '🚗', text: t('incident_type_accident') || 'Accident' },
+      BREAKDOWN: { color: 'bg-orange-100 text-orange-700', icon: '🔧', text: t('incident_type_breakdown') || 'Panne' },
+      THEFT: { color: 'bg-purple-100 text-purple-700', icon: '🔒', text: t('incident_type_theft') || 'Vol' },
+      DAMAGE: { color: 'bg-amber-100 text-amber-700', icon: '⚠️', text: t('incident_type_damage') || 'Dégât' },
+      OTHER: { color: 'bg-gray-100 text-gray-700', icon: '📝', text: t('incident_type_other') || 'Autre' },
+    };
+    return typeMap[type] || { color: 'bg-gray-100 text-gray-700', icon: '📝', text: type };
   };
 
   const getTypeLabel = (type) => {
@@ -95,279 +100,288 @@ const AdminIncidents = () => {
   };
 
   return (
-    <>
-      <Header />
-      <MobileMenu />
-
-      <div className="dashboard_sidebar_menu">
-        <div
-          className="offcanvas offcanvas-dashboard offcanvas-start"
-          tabIndex="-1"
-          id="DashboardOffcanvasMenu"
-          data-bs-scroll="true"
-        >
-          <SidebarMenu />
+    <AdminLayout title={t('incidents_management') || "Gestion des Incidents"}>
+      {/* Header Actions */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <div className="flex items-center gap-3">
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+          >
+            <option value="">{t('all_statuses') || "Tous les statuts"}</option>
+            <option value="PENDING">{t('status_pending') || "En attente"}</option>
+            <option value="IN_PROGRESS">{t('status_in_progress') || "En cours"}</option>
+            <option value="RESOLVED">{t('status_resolved') || "Résolu"}</option>
+            <option value="CLOSED">{t('status_closed') || "Fermé"}</option>
+          </select>
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary/10 text-primary">
+            {incidents.length} {t('incidents') || "incidents"}
+          </span>
         </div>
       </div>
 
-      <section className="our-dashbord dashbord bgc-f7 pb50">
-        <div className="container-fluid ovh">
-          <div className="row">
-            <div className="col-lg-12 maxw100flex-992">
-              <div className="row">
-                <div className="col-lg-12">
-                  <div className="dashboard_navigationbar dn db-1024">
-                    <div className="dropdown">
-                      <button
-                        className="dropbtn"
-                        data-bs-toggle="offcanvas"
-                        data-bs-target="#DashboardOffcanvasMenu"
-                        aria-controls="DashboardOffcanvasMenu"
-                      >
-                        <i className="fa fa-bars pr10"></i> {t('navigation') || "Navigation"}
-                      </button>
-                    </div>
-                  </div>
-                </div>
+      {/* Table Card */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        {loading ? (
+          <div className="flex items-center justify-center py-20">
+            <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        ) : incidents.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-20 text-center">
+            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+              <svg className="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-1">{t('no_incidents') || "Aucun incident"}</h3>
+            <p className="text-gray-500">
+              {statusFilter 
+                ? t('no_incidents_filter') || "Aucun incident ne correspond à ce filtre."
+                : t('no_incidents_description') || "Aucun incident déclaré pour le moment."}
+            </p>
+          </div>
+        ) : (
+          <>
+            {/* Desktop Table */}
+            <div className="hidden lg:block overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50 border-b border-gray-200">
+                  <tr>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">{t('type') || "Type"}</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">{t('incident') || "Incident"}</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">{t('reporter') || "Déclarant"}</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">{t('date') || "Date"}</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">{t('status') || "Statut"}</th>
+                    <th className="px-6 py-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">{t('actions') || "Actions"}</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {incidents.map((incident) => {
+                    const typeConfig = getTypeConfig(incident.type);
+                    const statusConfig = getStatusConfig(incident.status);
+                    return (
+                      <tr key={incident.id} className="hover:bg-gray-50 transition-colors">
+                        <td className="px-6 py-4">
+                          <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${typeConfig.color}`}>
+                            <span>{typeConfig.icon}</span>
+                            {typeConfig.text}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <p className="font-medium text-gray-900">{incident.title}</p>
+                        </td>
+                        <td className="px-6 py-4">
+                          <p className="text-gray-900">{incident.firstName} {incident.lastName}</p>
+                          <p className="text-sm text-gray-500">{incident.email}</p>
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-600">
+                          {formatDate(incident.date || incident.createdAt)}
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${statusConfig.color}`}>
+                            {statusConfig.text}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center justify-end gap-2">
+                            <button
+                              onClick={() => handleViewDetails(incident.id)}
+                              className="p-2 text-gray-500 hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                              title={t('view_details') || "Voir les détails"}
+                            >
+                              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                              </svg>
+                            </button>
+                            {incident.status !== 'CLOSED' && (
+                              <select
+                                value={incident.status}
+                                onChange={(e) => handleStatusChange(incident.id, e.target.value)}
+                                className="px-2 py-1 text-sm bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20"
+                              >
+                                <option value="PENDING">{t('status_pending') || "En attente"}</option>
+                                <option value="IN_PROGRESS">{t('status_in_progress') || "En cours"}</option>
+                                <option value="RESOLVED">{t('status_resolved') || "Résolu"}</option>
+                                <option value="CLOSED">{t('status_closed') || "Fermé"}</option>
+                              </select>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
 
-                <div className="col-lg-12 mb10">
-                  <div className="breadcrumb_content style2">
-                    <h2 className="breadcrumb_title">{t('incidents_management') || "Gestion des Incidents"}</h2>
-                    <div className="d-flex align-items-center gap-3">
-                      <select
-                        value={statusFilter}
-                        onChange={(e) => setStatusFilter(e.target.value)}
-                        className="form-select"
-                        style={{ width: '200px', display: 'inline-block' }}
-                      >
-                        <option value="">{t('all_statuses') || "Tous les statuts"}</option>
-                        <option value="PENDING">{t('status_pending') || "En attente"}</option>
-                        <option value="IN_PROGRESS">{t('status_in_progress') || "En cours"}</option>
-                        <option value="RESOLVED">{t('status_resolved') || "Résolu"}</option>
-                        <option value="CLOSED">{t('status_closed') || "Fermé"}</option>
-                      </select>
-                      <span className="badge bg-primary">
-                        {incidents.length} {t('incidents') || "incidents"}
+            {/* Mobile Cards */}
+            <div className="lg:hidden divide-y divide-gray-200">
+              {incidents.map((incident) => {
+                const typeConfig = getTypeConfig(incident.type);
+                const statusConfig = getStatusConfig(incident.status);
+                return (
+                  <div key={incident.id} className="p-4">
+                    <div className="flex items-start justify-between mb-2">
+                      <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${typeConfig.color}`}>
+                        <span>{typeConfig.icon}</span>
+                        {typeConfig.text}
+                      </span>
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${statusConfig.color}`}>
+                        {statusConfig.text}
                       </span>
                     </div>
+                    <p className="font-medium text-gray-900 mb-1">{incident.title}</p>
+                    <p className="text-sm text-gray-500 mb-2">{incident.firstName} {incident.lastName}</p>
+                    <p className="text-xs text-gray-400 mb-3">{formatDate(incident.date || incident.createdAt)}</p>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handleViewDetails(incident.id)}
+                        className="flex-1 text-center px-3 py-2 text-sm font-medium text-primary bg-primary/10 rounded-lg hover:bg-primary/20 transition-colors"
+                      >
+                        {t('view_details') || "Détails"}
+                      </button>
+                      {incident.status !== 'CLOSED' && (
+                        <select
+                          value={incident.status}
+                          onChange={(e) => handleStatusChange(incident.id, e.target.value)}
+                          className="px-2 py-2 text-sm bg-white border border-gray-300 rounded-lg"
+                        >
+                          <option value="PENDING">En attente</option>
+                          <option value="IN_PROGRESS">En cours</option>
+                          <option value="RESOLVED">Résolu</option>
+                          <option value="CLOSED">Fermé</option>
+                        </select>
+                      )}
+                    </div>
                   </div>
-                </div>
-
-                <div className="col-lg-12">
-                  <div className="my_dashboard_review mb40">
-                    {loading ? (
-                      <div className="text-center py-5">
-                        <div className="spinner-border text-primary" role="status">
-                          <span className="visually-hidden">{t('loading') || "Chargement..."}</span>
-                        </div>
-                      </div>
-                    ) : incidents.length === 0 ? (
-                      <div className="text-center py-5">
-                        <i className="fa fa-exclamation-triangle" style={{ fontSize: '64px', color: '#ccc', marginBottom: '20px' }}></i>
-                        <h5 className="mb-3">{t('no_incidents') || "Aucun incident"}</h5>
-                        <p className="text-muted">
-                          {statusFilter 
-                            ? t('no_incidents_filter') || "Aucun incident ne correspond à ce filtre."
-                            : t('no_incidents_description') || "Aucun incident déclaré pour le moment."}
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="table-responsive mt0">
-                        <table className="table">
-                          <thead className="thead-light">
-                            <tr>
-                              <th scope="col">{t('type') || "Type"}</th>
-                              <th scope="col">{t('title') || "Titre"}</th>
-                              <th scope="col">{t('reporter') || "Déclarant"}</th>
-                              <th scope="col">{t('date') || "Date"}</th>
-                              <th scope="col">{t('status') || "Statut"}</th>
-                              <th scope="col">{t('actions') || "Actions"}</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {incidents.map((incident) => (
-                              <tr key={incident.id}>
-                                <td>
-                                  <span className="badge bg-info">
-                                    {getTypeLabel(incident.type)}
-                                  </span>
-                                </td>
-                                <td>{incident.title}</td>
-                                <td>
-                                  <div>
-                                    <div>{incident.firstName} {incident.lastName}</div>
-                                    <small className="text-muted">{incident.email}</small>
-                                  </div>
-                                </td>
-                                <td>{formatDate(incident.date || incident.createdAt)}</td>
-                                <td>{getStatusBadge(incident.status)}</td>
-                                <td>
-                                  <div className="d-flex gap-2">
-                                    <button
-                                      className="btn btn-sm btn-primary"
-                                      onClick={() => handleViewDetails(incident.id)}
-                                      title={t('view_details') || "Voir les détails"}
-                                    >
-                                      <i className="fa fa-eye"></i>
-                                    </button>
-                                    {incident.status !== 'CLOSED' && (
-                                      <select
-                                        className="form-select form-select-sm"
-                                        style={{ width: 'auto' }}
-                                        value={incident.status}
-                                        onChange={(e) => handleStatusChange(incident.id, e.target.value)}
-                                      >
-                                        <option value="PENDING">{t('status_pending') || "En attente"}</option>
-                                        <option value="IN_PROGRESS">{t('status_in_progress') || "En cours"}</option>
-                                        <option value="RESOLVED">{t('status_resolved') || "Résolu"}</option>
-                                        <option value="CLOSED">{t('status_closed') || "Fermé"}</option>
-                                      </select>
-                                    )}
-                                  </div>
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
+                );
+              })}
             </div>
-          </div>
-        </div>
-      </section>
+          </>
+        )}
+      </div>
 
       {/* Modal pour les détails */}
       {selectedIncident && (
-        <div className="modal fade show" style={{ display: 'block' }} tabIndex="-1">
-          <div className="modal-dialog modal-lg">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">{t('incident_details') || "Détails de l'incident"}</h5>
-                <button
-                  type="button"
-                  className="btn-close"
-                  onClick={() => setSelectedIncident(null)}
-                ></button>
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center" onClick={() => setSelectedIncident(null)}>
+          <div className="absolute inset-0 bg-black/60" />
+          <div 
+            className="relative bg-white rounded-xl shadow-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <h3 className="text-xl font-bold text-gray-900">{t('incident_details') || "Détails de l'incident"}</h3>
+              <button
+                onClick={() => setSelectedIncident(null)}
+                className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className="p-6 space-y-4">
+              <div className="flex items-center gap-3">
+                <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium ${getTypeConfig(selectedIncident.type).color}`}>
+                  {getTypeConfig(selectedIncident.type).icon} {getTypeConfig(selectedIncident.type).text}
+                </span>
+                <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusConfig(selectedIncident.status).color}`}>
+                  {getStatusConfig(selectedIncident.status).text}
+                </span>
               </div>
-              <div className="modal-body">
-                <div className="row mb-3">
-                  <div className="col-md-6">
-                    <strong>{t('type') || "Type"}:</strong> {getTypeLabel(selectedIncident.type)}
-                  </div>
-                  <div className="col-md-6">
-                    <strong>{t('status') || "Statut"}:</strong> {getStatusBadge(selectedIncident.status)}
-                  </div>
+              <div>
+                <p className="text-sm text-gray-500 mb-1">{t('title') || "Titre"}</p>
+                <p className="font-semibold text-gray-900">{selectedIncident.title}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500 mb-1">{t('description') || "Description"}</p>
+                <p className="text-gray-700">{selectedIncident.description}</p>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">{t('reporter') || "Déclarant"}</p>
+                  <p className="font-medium text-gray-900">{selectedIncident.firstName} {selectedIncident.lastName}</p>
                 </div>
-                <div className="row mb-3">
-                  <div className="col-12">
-                    <strong>{t('title') || "Titre"}:</strong> {selectedIncident.title}
-                  </div>
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">{t('email') || "Email"}</p>
+                  <p className="text-gray-700">{selectedIncident.email}</p>
                 </div>
-                <div className="row mb-3">
-                  <div className="col-12">
-                    <strong>{t('description') || "Description"}:</strong>
-                    <p>{selectedIncident.description}</p>
-                  </div>
+              </div>
+              {selectedIncident.phone && (
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">{t('phone') || "Téléphone"}</p>
+                  <p className="text-gray-700">{selectedIncident.phone}</p>
                 </div>
-                <div className="row mb-3">
-                  <div className="col-md-6">
-                    <strong>{t('reporter') || "Déclarant"}:</strong> {selectedIncident.firstName} {selectedIncident.lastName}
-                  </div>
-                  <div className="col-md-6">
-                    <strong>{t('email') || "Email"}:</strong> {selectedIncident.email}
-                  </div>
+              )}
+              {selectedIncident.location && (
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">{t('location') || "Localisation"}</p>
+                  <p className="text-gray-700">{selectedIncident.location}</p>
                 </div>
-                {selectedIncident.phone && (
-                  <div className="row mb-3">
-                    <div className="col-md-6">
-                      <strong>{t('phone') || "Téléphone"}:</strong> {selectedIncident.phone}
-                    </div>
-                  </div>
-                )}
-                {selectedIncident.location && (
-                  <div className="row mb-3">
-                    <div className="col-12">
-                      <strong>{t('location') || "Localisation"}:</strong> {selectedIncident.location}
-                    </div>
-                  </div>
-                )}
-                {selectedIncident.vehicle && (
-                  <div className="row mb-3">
-                    <div className="col-12">
-                      <strong>{t('related_vehicle') || "Véhicule concerné"}:</strong> {selectedIncident.vehicle.title}
-                    </div>
-                  </div>
-                )}
-                {selectedIncident.apartment && (
-                  <div className="row mb-3">
-                    <div className="col-12">
-                      <strong>{t('related_apartment') || "Appartement concerné"}:</strong> {selectedIncident.apartment.title}
-                    </div>
-                  </div>
-                )}
-                {selectedIncident.images && selectedIncident.images.length > 0 && (
-                  <div className="row mb-3">
-                    <div className="col-12">
-                      <strong>{t('images') || "Images"}:</strong>
-                      <div className="d-flex flex-wrap gap-2 mt-2">
-                        {selectedIncident.images.map((image, index) => (
-                          <img
-                            key={index}
-                            src={image}
-                            alt={`Incident ${index + 1}`}
-                            style={{ maxWidth: '150px', maxHeight: '150px', objectFit: 'cover', borderRadius: '4px' }}
-                          />
-                        ))}
+              )}
+              {(selectedIncident.vehicle || selectedIncident.apartment) && (
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">{t('related_service') || "Service concerné"}</p>
+                  <p className="text-gray-700">
+                    {selectedIncident.vehicle?.title || selectedIncident.apartment?.title}
+                  </p>
+                </div>
+              )}
+              {selectedIncident.images && selectedIncident.images.length > 0 && (
+                <div>
+                  <p className="text-sm text-gray-500 mb-2">{t('images') || "Images"}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedIncident.images.map((image, index) => (
+                      <div key={index} className="w-24 h-24 rounded-lg overflow-hidden bg-gray-100">
+                        <Image
+                          src={image}
+                          alt={`Incident ${index + 1}`}
+                          width={96}
+                          height={96}
+                          className="w-full h-full object-cover"
+                        />
                       </div>
-                    </div>
-                  </div>
-                )}
-                <div className="row">
-                  <div className="col-md-6">
-                    <strong>{t('created_at') || "Date de création"}:</strong> {formatDate(selectedIncident.createdAt)}
-                  </div>
-                  <div className="col-md-6">
-                    <strong>{t('updated_at') || "Dernière mise à jour"}:</strong> {formatDate(selectedIncident.updatedAt)}
+                    ))}
                   </div>
                 </div>
+              )}
+              <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-200">
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">{t('created_at') || "Créé le"}</p>
+                  <p className="text-gray-700">{formatDate(selectedIncident.createdAt)}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">{t('updated_at') || "Mis à jour le"}</p>
+                  <p className="text-gray-700">{formatDate(selectedIncident.updatedAt)}</p>
+                </div>
               </div>
-              <div className="modal-footer">
-                {selectedIncident.status !== 'CLOSED' && (
-                  <select
-                    className="form-select"
-                    style={{ width: 'auto', display: 'inline-block' }}
-                    value={selectedIncident.status}
-                    onChange={(e) => {
-                      handleStatusChange(selectedIncident.id, e.target.value);
-                    }}
-                  >
-                    <option value="PENDING">{t('status_pending') || "En attente"}</option>
-                    <option value="IN_PROGRESS">{t('status_in_progress') || "En cours"}</option>
-                    <option value="RESOLVED">{t('status_resolved') || "Résolu"}</option>
-                    <option value="CLOSED">{t('status_closed') || "Fermé"}</option>
-                  </select>
-                )}
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={() => setSelectedIncident(null)}
+            </div>
+            <div className="flex items-center justify-end gap-3 p-6 border-t border-gray-200 bg-gray-50">
+              {selectedIncident.status !== 'CLOSED' && (
+                <select
+                  value={selectedIncident.status}
+                  onChange={(e) => handleStatusChange(selectedIncident.id, e.target.value)}
+                  className="px-4 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20"
                 >
-                  {t('close') || "Fermer"}
-                </button>
-              </div>
+                  <option value="PENDING">{t('status_pending') || "En attente"}</option>
+                  <option value="IN_PROGRESS">{t('status_in_progress') || "En cours"}</option>
+                  <option value="RESOLVED">{t('status_resolved') || "Résolu"}</option>
+                  <option value="CLOSED">{t('status_closed') || "Fermé"}</option>
+                </select>
+              )}
+              <button
+                onClick={() => setSelectedIncident(null)}
+                className="px-4 py-2 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                {t('close') || "Fermer"}
+              </button>
             </div>
           </div>
         </div>
       )}
-
-      {/* Overlay pour le modal */}
-      {selectedIncident && (
-        <div className="modal-backdrop fade show" onClick={() => setSelectedIncident(null)}></div>
-      )}
-    </>
+    </AdminLayout>
   );
 };
 

@@ -1,17 +1,14 @@
 'use client'
 
 import { useEffect, useState } from 'react';
-import { useRouter, useParams } from "next/navigation";
-import Header from "../../common/header/dashboard/Header";
-import SidebarMenu from "../../common/header/dashboard/SidebarMenu";
-import MobileMenu from "../../common/header/MobileMenu";
+import { useParams } from "next/navigation";
+import AdminLayout from '@/components/admin/AdminLayout';
 import adminService from '@/services/adminService';
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
 
 const AdminClientDetails = () => {
   const params = useParams();
-  const router = useRouter();
   const [client, setClient] = useState(null);
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -59,331 +56,254 @@ const AdminClientDetails = () => {
 
   const formatDate = (dateString) => {
     if (!dateString) return '-';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('fr-FR', {
+    return new Date(dateString).toLocaleDateString('fr-FR', {
       year: 'numeric',
-      month: 'long',
+      month: 'short',
       day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
     });
   };
 
-  const getStatusBadge = (status) => {
+  const getStatusConfig = (status) => {
     const statusMap = {
-      PENDING: { class: 'warning', text: t('status_pending') || 'En attente' },
-      CONFIRMED: { class: 'success', text: t('status_confirmed') || 'Confirmée' },
-      CANCELLED: { class: 'danger', text: t('status_cancelled') || 'Annulée' },
-      COMPLETED: { class: 'info', text: t('status_completed') || 'Terminée' },
+      PENDING: { color: 'bg-yellow-100 text-yellow-700', text: t('status_pending') || 'En attente' },
+      CONFIRMED: { color: 'bg-green-100 text-green-700', text: t('status_confirmed') || 'Confirmée' },
+      CANCELLED: { color: 'bg-red-100 text-red-700', text: t('status_cancelled') || 'Annulée' },
+      COMPLETED: { color: 'bg-blue-100 text-blue-700', text: t('status_completed') || 'Terminée' },
     };
-    const config = statusMap[status] || { class: 'secondary', text: status };
-    return (
-      <span className={`badge bg-${config.class}`}>
-        {config.text}
-      </span>
-    );
+    return statusMap[status] || { color: 'bg-gray-100 text-gray-700', text: status };
   };
 
-  if (loading) {
-    return (
-      <>
-        <Header />
-        <MobileMenu />
-        <div className="dashboard_sidebar_menu">
-          <div className="offcanvas offcanvas-dashboard offcanvas-start" tabIndex="-1" id="DashboardOffcanvasMenu" data-bs-scroll="true">
-            <SidebarMenu />
-          </div>
-        </div>
-        <div className="d-flex justify-content-center align-items-center min-vh-100">
-          <div className="spinner-border text-primary" role="status">
-            <span className="visually-hidden">{t('loading') || "Chargement..."}</span>
-          </div>
-        </div>
-      </>
-    );
-  }
-
-  if (!client) {
-    return (
-      <>
-        <Header />
-        <MobileMenu />
-        <div className="dashboard_sidebar_menu">
-          <div className="offcanvas offcanvas-dashboard offcanvas-start" tabIndex="-1" id="DashboardOffcanvasMenu" data-bs-scroll="true">
-            <SidebarMenu />
-          </div>
-        </div>
-        <div className="text-center py-5">
-          <h4>{t('client_not_found') || "Client non trouvé"}</h4>
-          <Link href="/admin/clients" className="btn btn-thm">{t('back_to_list') || "Retour à la liste"}</Link>
-        </div>
-      </>
-    );
-  }
+  const getRoleConfig = (role) => {
+    const roleMap = {
+      ADMIN: { color: 'bg-red-100 text-red-700' },
+      MANAGER: { color: 'bg-orange-100 text-orange-700' },
+      USER: { color: 'bg-blue-100 text-blue-700' },
+    };
+    return roleMap[role] || { color: 'bg-gray-100 text-gray-700' };
+  };
 
   return (
-    <>
-      <Header />
-      <MobileMenu />
-
-      <div className="dashboard_sidebar_menu">
-        <div className="offcanvas offcanvas-dashboard offcanvas-start" tabIndex="-1" id="DashboardOffcanvasMenu" data-bs-scroll="true">
-          <SidebarMenu />
-        </div>
+    <AdminLayout title={t('client_details') || "Détails du client"}>
+      {/* Back Button */}
+      <div className="mb-6">
+        <Link 
+          href="/admin/clients" 
+          className="inline-flex items-center gap-2 text-gray-600 hover:text-primary transition-colors"
+        >
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          {t('back_to_list') || "Retour à la liste"}
+        </Link>
       </div>
 
-      <section className="our-dashbord dashbord bgc-f7 pb50">
-        <div className="container-fluid ovh">
-          <div className="row">
-            <div className="col-lg-12 maxw100flex-992">
-              <div className="row">
-                <div className="col-lg-12">
-                  <div className="dashboard_navigationbar dn db-1024">
-                    <div className="dropdown">
-                      <button className="dropbtn" data-bs-toggle="offcanvas" data-bs-target="#DashboardOffcanvasMenu" aria-controls="DashboardOffcanvasMenu">
-                        <i className="fa fa-bars pr10"></i> {t('navigation') || "Navigation"}
-                      </button>
-                    </div>
-                  </div>
-                </div>
+      {/* Loading State */}
+      {loading && (
+        <div className="flex items-center justify-center py-20">
+          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      )}
 
-                <div className="col-lg-12 mb10">
-                  <div className="breadcrumb_content style2">
-                    <h2 className="breadcrumb_title">{t('client_details') || "Détails du client"}</h2>
-                    <Link href="/admin/clients" className="btn btn-thm-outline">
-                      <i className="fa fa-arrow-left me-2"></i>
-                      {t('back_to_list') || "Retour à la liste"}
-                    </Link>
-                  </div>
-                </div>
+      {/* Error State */}
+      {error && (
+        <div className="p-4 bg-red-50 text-red-700 border border-red-200 rounded-lg mb-6">
+          {error}
+        </div>
+      )}
 
-                {error && (
-                  <div className="col-lg-12 mb-3">
-                    <div className="alert alert-danger" role="alert">
-                      {error}
-                    </div>
+      {/* Not Found State */}
+      {!loading && !client && (
+        <div className="flex flex-col items-center justify-center py-20 text-center">
+          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+            <svg className="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('client_not_found') || "Client non trouvé"}</h3>
+          <Link href="/admin/clients" className="text-primary hover:underline">
+            {t('back_to_list') || "Retour à la liste"}
+          </Link>
+        </div>
+      )}
+
+      {/* Client Details */}
+      {!loading && client && (
+        <div className="space-y-6">
+          {/* Client Header */}
+          <div className="flex items-center gap-4">
+            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-2xl font-bold text-primary">
+              {client.firstName?.charAt(0)}{client.lastName?.charAt(0)}
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-gray-900">{client.firstName} {client.lastName}</h2>
+              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getRoleConfig(client.role).color}`}>
+                {client.role}
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Client Information */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+              <div className="px-6 py-4 bg-primary/5 border-b border-gray-200">
+                <h3 className="font-semibold text-gray-900 flex items-center gap-2">
+                  <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  {t('client_information') || "Informations du client"}
+                </h3>
+              </div>
+              <div className="p-6 space-y-4">
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">{t('email') || "Email"}</p>
+                  <a href={`mailto:${client.email}`} className="text-primary hover:underline">
+                    {client.email}
+                  </a>
+                </div>
+                {client.phone && (
+                  <div>
+                    <p className="text-sm text-gray-500 mb-1">{t('phone') || "Téléphone"}</p>
+                    <a href={`tel:${client.phone}`} className="text-primary hover:underline">
+                      {client.phone}
+                    </a>
                   </div>
                 )}
-
-                <div className="col-lg-12">
-                  <div className="my_dashboard_review mb40">
-                    <div className="row">
-                      {/* Informations du client */}
-                      <div className="col-lg-6 mb-3">
-                        <div className="card shadow-sm">
-                          <div className="card-header bg-primary text-white">
-                            <h5 className="mb-0">
-                              <i className="fa fa-user me-2"></i>
-                              {t('client_information') || "Informations du client"}
-                            </h5>
-                          </div>
-                          <div className="card-body">
-                            <div className="mb-3">
-                              <div className="d-flex align-items-center mb-2">
-                                <i className="fa fa-id-card text-primary me-2" style={{ width: '20px' }}></i>
-                                <strong className="me-2">{t('name') || "Nom"}:</strong>
-                              </div>
-                              <p className="ms-4 mb-0">{client.firstName} {client.lastName}</p>
-                            </div>
-                            <div className="mb-3">
-                              <div className="d-flex align-items-center mb-2">
-                                <i className="fa fa-envelope text-primary me-2" style={{ width: '20px' }}></i>
-                                <strong className="me-2">{t('email') || "Email"}:</strong>
-                              </div>
-                              <p className="ms-4 mb-0">
-                                <a href={`mailto:${client.email}`} className="text-decoration-none">
-                                  {client.email}
-                                </a>
-                              </p>
-                            </div>
-                            {client.phone && (
-                              <div className="mb-3">
-                                <div className="d-flex align-items-center mb-2">
-                                  <i className="fa fa-phone text-primary me-2" style={{ width: '20px' }}></i>
-                                  <strong className="me-2">{t('phone') || "Téléphone"}:</strong>
-                                </div>
-                                <p className="ms-4 mb-0">
-                                  <a href={`tel:${client.phone}`} className="text-decoration-none">
-                                    {client.phone}
-                                  </a>
-                                </p>
-                              </div>
-                            )}
-                            <div className="mb-3">
-                              <div className="d-flex align-items-center mb-2">
-                                <i className="fa fa-user-circle text-primary me-2" style={{ width: '20px' }}></i>
-                                <strong className="me-2">{t('role') || "Rôle"}:</strong>
-                              </div>
-                              <p className="ms-4 mb-0">
-                                <span className={`badge ${client.role === 'ADMIN' ? 'bg-danger' : client.role === 'MANAGER' ? 'bg-warning' : 'bg-primary'}`}>
-                                  {client.role}
-                                </span>
-                              </p>
-                            </div>
-                            <div className="mb-3">
-                              <div className="d-flex align-items-center mb-2">
-                                <i className="fa fa-clock-o text-primary me-2" style={{ width: '20px' }}></i>
-                                <strong className="me-2">{t('created_at') || "Date de création"}:</strong>
-                              </div>
-                              <p className="ms-4 mb-0">{formatDate(client.createdAt)}</p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Statistiques */}
-                      <div className="col-lg-6 mb-3">
-                        <div className="card shadow-sm">
-                          <div className="card-header bg-success text-white">
-                            <h5 className="mb-0">
-                              <i className="fa fa-bar-chart me-2"></i>
-                              {t('statistics') || "Statistiques"}
-                            </h5>
-                          </div>
-                          <div className="card-body">
-                            <div className="text-center py-3">
-                              <div className="mb-3">
-                                <i className="fa fa-calendar-check-o fa-3x text-success mb-3"></i>
-                              </div>
-                              <h3 className="text-success mb-0">
-                                {client._count?.bookings || bookings.length || 0}
-                              </h3>
-                              <p className="text-muted mb-0">
-                                <i className="fa fa-info-circle me-1"></i>
-                                {t('total_reservations') || "Total réservations"}
-                              </p>
-                            </div>
-                            {bookings.length > 0 && (
-                              <div className="mt-3 pt-3 border-top">
-                                <div className="row text-center">
-                                  <div className="col-6">
-                                    <small className="text-muted d-block">{t('status_pending') || "En attente"}</small>
-                                    <strong className="text-warning">
-                                      {bookings.filter(b => b.status === 'PENDING').length}
-                                    </strong>
-                                  </div>
-                                  <div className="col-6">
-                                    <small className="text-muted d-block">{t('status_confirmed') || "Confirmées"}</small>
-                                    <strong className="text-success">
-                                      {bookings.filter(b => b.status === 'CONFIRMED').length}
-                                    </strong>
-                                  </div>
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Historique des réservations */}
-                      <div className="col-lg-12">
-                        <div className="card shadow-sm">
-                          <div className="card-header bg-info text-white">
-                            <h5 className="mb-0">
-                              <i className="fa fa-history me-2"></i>
-                              {t('booking_history') || "Historique des réservations"}
-                            </h5>
-                          </div>
-                          <div className="card-body">
-                            {bookingsLoading ? (
-                              <div className="text-center py-5">
-                                <div className="spinner-border text-primary" role="status">
-                                  <span className="visually-hidden">{t('loading') || "Chargement..."}</span>
-                                </div>
-                                <p className="mt-3 text-muted">{t('loading') || "Chargement..."}</p>
-                              </div>
-                            ) : bookings.length === 0 ? (
-                              <div className="text-center py-5">
-                                <i className="fa fa-calendar-times-o fa-3x text-muted mb-3"></i>
-                                <p className="text-muted">{t('no_reservations') || "Aucune réservation"}</p>
-                              </div>
-                            ) : (
-                              <div className="table-responsive">
-                                <table className="table table-hover">
-                                  <thead className="table-light">
-                                    <tr>
-                                      <th>
-                                        <i className="fa fa-cog me-2"></i>
-                                        {t('service') || "Service"}
-                                      </th>
-                                      <th>
-                                        <i className="fa fa-calendar me-2"></i>
-                                        {t('period') || "Période"}
-                                      </th>
-                                      <th>
-                                        <i className="fa fa-money me-2"></i>
-                                        {t('amount') || "Montant"}
-                                      </th>
-                                      <th>
-                                        <i className="fa fa-info-circle me-2"></i>
-                                        {t('status') || "Statut"}
-                                      </th>
-                                      <th>
-                                        <i className="fa fa-cogs me-2"></i>
-                                        {t('actions') || "Actions"}
-                                      </th>
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                    {bookings.map((booking) => (
-                                      <tr key={booking.id}>
-                                        <td>
-                                          {booking.vehicle ? (
-                                            <span>
-                                              <i className="fa fa-car text-info me-2"></i>
-                                              {booking.vehicle.title}
-                                            </span>
-                                          ) : booking.apartment ? (
-                                            <span>
-                                              <i className="fa fa-home text-success me-2"></i>
-                                              {booking.apartment.title}
-                                            </span>
-                                          ) : (
-                                            <span className="text-muted">N/A</span>
-                                          )}
-                                        </td>
-                                        <td>
-                                          <small>
-                                            <i className="fa fa-arrow-right me-1"></i>
-                                            {formatDate(booking.startDate)} → {formatDate(booking.endDate)}
-                                          </small>
-                                        </td>
-                                        <td>
-                                          <strong className="text-success">
-                                            {booking.totalPrice?.toLocaleString('fr-FR')} FCFA
-                                          </strong>
-                                        </td>
-                                        <td>{getStatusBadge(booking.status)}</td>
-                                        <td>
-                                          <Link 
-                                            href={{ 
-                                              pathname: '/admin/reservations/[id]', 
-                                              params: { id: booking.id } 
-                                            }} 
-                                            className="btn btn-sm btn-primary"
-                                          >
-                                            <i className="fa fa-eye me-1"></i>
-                                            {t('view_details') || "Détails"}
-                                          </Link>
-                                        </td>
-                                      </tr>
-                                    ))}
-                                  </tbody>
-                                </table>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">{t('created_at') || "Date d'inscription"}</p>
+                  <p className="text-gray-700">{formatDate(client.createdAt)}</p>
                 </div>
               </div>
             </div>
+
+            {/* Statistics */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+              <div className="px-6 py-4 bg-green-50 border-b border-gray-200">
+                <h3 className="font-semibold text-gray-900 flex items-center gap-2">
+                  <svg className="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  </svg>
+                  {t('statistics') || "Statistiques"}
+                </h3>
+              </div>
+              <div className="p-6">
+                <div className="text-center">
+                  <p className="text-4xl font-bold text-green-600 mb-1">
+                    {client._count?.bookings || bookings.length || 0}
+                  </p>
+                  <p className="text-gray-500">{t('total_reservations') || "Total réservations"}</p>
+                </div>
+                {bookings.length > 0 && (
+                  <div className="grid grid-cols-2 gap-4 mt-6 pt-6 border-t border-gray-200">
+                    <div className="text-center">
+                      <p className="text-2xl font-bold text-yellow-600">{bookings.filter(b => b.status === 'PENDING').length}</p>
+                      <p className="text-sm text-gray-500">{t('status_pending') || "En attente"}</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-2xl font-bold text-green-600">{bookings.filter(b => b.status === 'CONFIRMED').length}</p>
+                      <p className="text-sm text-gray-500">{t('status_confirmed') || "Confirmées"}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Booking History */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div className="px-6 py-4 bg-blue-50 border-b border-gray-200">
+              <h3 className="font-semibold text-gray-900 flex items-center gap-2">
+                <svg className="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                {t('booking_history') || "Historique des réservations"}
+              </h3>
+            </div>
+            
+            {bookingsLoading ? (
+              <div className="flex items-center justify-center py-12">
+                <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+              </div>
+            ) : bookings.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-12 text-center">
+                <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3">
+                  <svg className="w-6 h-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <p className="text-gray-500">{t('no_reservations') || "Aucune réservation"}</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-50 border-b border-gray-200">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">{t('service') || "Service"}</th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">{t('period') || "Période"}</th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">{t('amount') || "Montant"}</th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">{t('status') || "Statut"}</th>
+                      <th className="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">{t('actions') || "Actions"}</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {bookings.map((booking) => {
+                      const statusConfig = getStatusConfig(booking.status);
+                      return (
+                        <tr key={booking.id} className="hover:bg-gray-50 transition-colors">
+                          <td className="px-6 py-4">
+                            <div className="flex items-center gap-3">
+                              <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${booking.vehicle ? 'bg-blue-100' : 'bg-purple-100'}`}>
+                                {booking.vehicle ? (
+                                  <svg className="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
+                                  </svg>
+                                ) : (
+                                  <svg className="w-5 h-5 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                                  </svg>
+                                )}
+                              </div>
+                              <span className="font-medium text-gray-900">
+                                {booking.vehicle?.title || booking.apartment?.title || 'N/A'}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-600">
+                            {formatDate(booking.startDate)} → {formatDate(booking.endDate)}
+                          </td>
+                          <td className="px-6 py-4">
+                            <span className="font-semibold text-green-600">
+                              {booking.totalPrice?.toLocaleString('fr-FR')} FCFA
+                            </span>
+                          </td>
+                          <td className="px-6 py-4">
+                            <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${statusConfig.color}`}>
+                              {statusConfig.text}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="flex justify-end">
+                              <Link 
+                                href={`/admin/reservations/${booking.id}`}
+                                className="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                              >
+                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                              </Link>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         </div>
-      </section>
-    </>
+      )}
+    </AdminLayout>
   );
 };
 

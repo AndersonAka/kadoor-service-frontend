@@ -58,84 +58,82 @@ const ChangePassword = () => {
   return (
     <form onSubmit={handleSubmit}>
       {message && (
-        <div className={`alert alert-${message.type === 'success' ? 'success' : 'danger'}`} role="alert">
+        <div className={`p-4 rounded-lg mb-4 ${message.type === 'success' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>
           {message.text}
         </div>
       )}
 
-      <div className="row">
-        <div className="col-xl-6">
-          <div className="my_profile_setting_input form-group">
-            <label htmlFor="oldPassword">{t('old_password') || "Ancien mot de passe"}</label>
-            <input
-              type="password"
-              className="form-control"
-              id="oldPassword"
-              name="oldPassword"
-              value={formData.oldPassword}
-              onChange={handleChange}
-              required
-            />
-          </div>
+      <div className="space-y-6">
+        <div className="max-w-md">
+          <label htmlFor="oldPassword" className="block text-sm font-medium text-gray-700 mb-2">
+            {t('old_password') || "Ancien mot de passe"}
+          </label>
+          <input
+            type="password"
+            id="oldPassword"
+            name="oldPassword"
+            value={formData.oldPassword}
+            onChange={handleChange}
+            required
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+          />
         </div>
-      </div>
-      {/* End .row */}
 
-      <div className="row">
-        <div className="col-lg-6 col-xl-6">
-          <div className="my_profile_setting_input form-group">
-            <label htmlFor="newPassword">{t('new_password') || "Nouveau mot de passe"}</label>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 mb-2">
+              {t('new_password') || "Nouveau mot de passe"}
+            </label>
             <input
               type="password"
-              className="form-control"
               id="newPassword"
               name="newPassword"
               value={formData.newPassword}
               onChange={handleChange}
               required
               minLength={6}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             />
           </div>
-        </div>
-        {/* End .col */}
 
-        <div className="col-lg-6 col-xl-6">
-          <div className="my_profile_setting_input form-group">
-            <label htmlFor="confirmPassword">
+          <div>
+            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
               {t('confirm_new_password') || "Confirmer le nouveau mot de passe"}
             </label>
             <input
               type="password"
-              className="form-control"
               id="confirmPassword"
               name="confirmPassword"
               value={formData.confirmPassword}
               onChange={handleChange}
               required
               minLength={6}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             />
           </div>
         </div>
-        {/* End .col */}
 
-        <div className="col-xl-12">
-          <div className="my_profile_setting_input">
-            <button type="submit" className="btn btn-thm" disabled={loading}>
-              {loading ? (
-                <>
-                  <span className="spinner-border spinner-border-sm me-2" role="status"></span>
-                  {t('updating') || "Mise à jour..."}
-                </>
-              ) : (
-                <>
-                  <i className="fa fa-key me-2"></i>
-                  {t('update_password') || "Mettre à jour le mot de passe"}
-                </>
-              )}
-            </button>
-          </div>
+        <div className="flex justify-end">
+          <button 
+            type="submit" 
+            disabled={loading}
+            className="px-6 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 flex items-center gap-2"
+          >
+            {loading ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                {t('updating') || "Mise à jour..."}
+              </>
+            ) : (
+              <>
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                </svg>
+                {t('update_password') || "Mettre à jour le mot de passe"}
+              </>
+            )}
+          </button>
         </div>
-        {/* End .col */}
       </div>
     </form>
   );

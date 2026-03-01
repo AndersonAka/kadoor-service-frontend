@@ -1,6 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
+import { useLoginModal } from '@/context/LoginModalContext';
 
 const LoginSignup = dynamic(
   () => import('./user-credentials/LoginSignup'),
@@ -8,18 +9,24 @@ const LoginSignup = dynamic(
 );
 
 const PopupSignInUp = () => {
+  const { isOpen, closeLoginModal } = useLoginModal();
+
+  if (!isOpen) return null;
+
   return (
     <div
-      className="sign_up_modal modal fade bd-example-modal-lg"
-      tabIndex="-1"
-      role="dialog"
-      aria-hidden="true"
+      className="fixed inset-0 z-[9999] flex items-center justify-center"
+      onClick={closeLoginModal}
     >
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/60" />
+      
+      {/* Modal */}
       <div
-        className="modal-dialog modal-dialog-centered modal-lg"
-        role="document"
+        className="relative bg-white rounded-xl shadow-2xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-auto"
+        onClick={(e) => e.stopPropagation()}
       >
-        <LoginSignup />
+        <LoginSignup onClose={closeLoginModal} />
       </div>
     </div>
   );

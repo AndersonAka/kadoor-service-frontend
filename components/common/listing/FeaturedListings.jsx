@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "@/i18n/routing";
 import Image from "next/image";
-import { formatPrice } from "@/utils/currency";
+import { useCurrency } from "@/context/CurrencyContext";
 import { useTranslations } from "next-intl";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || '/api';
@@ -12,6 +12,7 @@ const FeaturedListings = ({ currentItemId, currentItemType }) => {
   const [recentItems, setRecentItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const t = useTranslations('Property');
+  const { formatPrice } = useCurrency();
 
   useEffect(() => {
     loadRecentlyViewed();
@@ -120,69 +121,59 @@ const FeaturedListings = ({ currentItemId, currentItemType }) => {
 
   if (loading) {
     return (
-      <div className="text-center py-3">
-        <div className="spinner-border spinner-border-sm text-primary" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div>
+      <div className="flex justify-center py-4">
+        <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
 
   if (recentItems.length === 0) {
     return (
-      <p className="text-muted text-center py-3">
+      <p className="text-gray-400 text-center py-4 text-sm">
         {t('no_recently_viewed') || 'Aucun élément récemment consulté'}
       </p>
     );
   }
 
   return (
-    <>
+    <div className="space-y-4">
       {recentItems.map((item) => {
         const detailUrl = item.type === 'vehicle' 
           ? `/vehicle-details/${item.id}`
           : `/apartment-details/${item.id}`;
 
         return (
-          <div className="media d-flex mb-3" key={item.id}>
-            <Link href={detailUrl}>
+          <Link href={detailUrl} key={item.id} className="flex gap-3 group">
+            <div className="relative w-20 h-16 flex-shrink-0 rounded-lg overflow-hidden">
               <Image
-                width={102}
-                height={80}
-                className="align-self-start me-3 w-100 h-100 cover"
                 src={item.image}
                 alt={item.title}
-                style={{ objectFit: 'cover', borderRadius: '4px' }}
+                fill
+                className="object-cover group-hover:scale-105 transition-transform"
               />
-            </Link>
-
-            <div className="media-body">
-              <h5 className="mt-0 post_title">
-                <Link href={detailUrl} className="text-decoration-none">
-                  {item.title}
-                </Link>
-              </h5>
-              <Link href={detailUrl} className="text-decoration-none">
-                <strong className="text-primary">
-                  {formatPrice(item.price)} 
-                  <small> /{item.type === 'vehicle' ? (t('day') || 'jour') : (t('month') || 'mois')}</small>
-                </strong>
-              </Link>
-
-              <ul className="mb0 mt-2">
-                {item.details.map((detail, i) => (
-                  <li key={i} className="list-inline-item">
-                    <small className="text-muted">
-                      {detail.name}: {detail.value} &nbsp;
-                    </small>
-                  </li>
-                ))}
-              </ul>
             </div>
-          </div>
+            <div className="flex-1 min-w-0">
+              <h5 className="text-sm font-medium text-gray-900 truncate group-hover:text-primary transition-colors">
+                {item.title}
+              </h5>
+              <p className="text-primary font-semibold text-sm">
+                {formatPrice(item.price)}
+                <span className="text-xs text-gray-400 font-normal">
+                  {' '}/{item.type === 'vehicle' ? (t('day') || 'jour') : (t('month') || 'mois')}
+                </span>
+              </p>
+              <div className="flex flex-wrap gap-2 mt-1">
+                {item.details.slice(0, 2).map((detail, i) => (
+                  <span key={i} className="text-xs text-gray-400">
+                    {detail.name}: {detail.value}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </Link>
         );
       })}
-    </>
+    </div>
   );
 };
 

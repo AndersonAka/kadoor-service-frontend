@@ -1,49 +1,23 @@
-import CopyrightFooter from "../common/footer/CopyrightFooter";
-import Footer from "../common/footer/Footer";
-import Header from "../home-10/Header";
-import MobileMenu from "../common/header/MobileMenu";
+import HeaderTailwind from "../common/header/HeaderTailwind";
+import FooterTailwind from "../common/footer/FooterTailwind";
 import PopupSignInUp from "../common/PopupSignInUp";
-import Wrapper from "../layout/Wrapper";
 import ErrorPageContent from "./ErrorPageContent";
 
 const index = () => {
   return (
     <>
-      {/* <!-- Main Header Nav --> */}
-      <Header />
-
-      {/* <!--  Mobile Menu --> */}
-      <MobileMenu />
-
-      {/* <!-- Modal --> */}
+      <HeaderTailwind />
       <PopupSignInUp />
 
-      {/* <!-- Our Error Page --> */}
-      <section className="our-error bgc-f7">
-        <div className="container">
-          <div className="row">
-            <div className="col-lg-10 offset-lg-1 text-center">
-              <ErrorPageContent />
-            </div>
+      <section className="pt-28 pb-20 min-h-[70vh] flex items-center bg-gray-50">
+        <div className="container-kadoor">
+          <div className="max-w-xl mx-auto text-center">
+            <ErrorPageContent />
           </div>
         </div>
       </section>
 
-      {/* <!-- Our Footer --> */}
-      <section className="footer_one">
-        <div className="container">
-          <div className="row">
-            <Footer />
-          </div>
-        </div>
-      </section>
-
-      {/* <!-- Our Footer Bottom Area --> */}
-      <section className="footer_middle_area pt40 pb40">
-        <div className="container">
-          <CopyrightFooter />
-        </div>
-      </section>
+      <FooterTailwind />
     </>
   );
 };

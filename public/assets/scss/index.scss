@@ -1,5 +1,5 @@
 @use "sass:meta";
-@import "bootstrap/dist/css/bootstrap.min.css";
+// Bootstrap removed - using pure Tailwind CSS
 @import "slick-carousel/slick/slick.css";
 @import "slick-carousel/slick/slick-theme.css";
 @include meta.load-css("components/custom-slick");

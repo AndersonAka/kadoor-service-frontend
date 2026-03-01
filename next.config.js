@@ -34,25 +34,12 @@ const nextConfig = {
   
   // Configuration des rewrites pour développement et production
   async rewrites() {
-    // En production sur Vercel, si NEXT_PUBLIC_API_URL est défini,
-    // on peut utiliser les rewrites pour proxy vers le backend externe
-    const isProduction = process.env.NODE_ENV === 'production';
-    const backendUrl = process.env.BACKEND_URL || process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:3001';
+    const backendUrl = process.env.BACKEND_URL || 'http://localhost:3001';
     
-    // Sur Vercel, on peut utiliser les rewrites pour le backend externe
-    // mais il est préférable d'utiliser NEXT_PUBLIC_API_URL directement côté client
-    // Les rewrites ici sont pour le SSR uniquement
     return [
       {
         source: '/api/:path*',
         destination: `${backendUrl}/:path*`,
-        has: [
-          {
-            type: 'header',
-            key: 'accept',
-            value: '(.*application/json.*|.*text/html.*)',
-          },
-        ],
       },
     ];
   },

@@ -1,106 +1,47 @@
 'use client';
 
-import Header from "../../common/header/dashboard/Header";
-import SidebarMenu from "../../common/header/dashboard/SidebarMenu";
-import MobileMenu from "../../common/header/MobileMenu";
+import AdminLayout from '@/components/admin/AdminLayout';
 import Activities from "./Activities";
 import AllStatistics from "./AllStatistics";
 import StatisticsChart from "./StatisticsChart";
 import { useTranslations } from "next-intl";
 
-const index = () => {
+const MyDashboard = () => {
   const t = useTranslations('Admin');
 
   return (
-    <>
-      {/* <!-- Main Header Nav --> */}
-      <Header />
+    <AdminLayout title={t('dashboard') || "Tableau de bord"}>
+      {/* Welcome Message */}
+      <div className="mb-6">
+        <p className="text-gray-500">{t('welcome_message') || "Bienvenue sur votre espace d'administration"}</p>
+      </div>
 
-      {/* <!--  Mobile Menu --> */}
-      <MobileMenu />
+      {/* Statistics Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <AllStatistics />
+      </div>
 
-      <div className="dashboard_sidebar_menu">
-        <div
-          className="offcanvas offcanvas-dashboard offcanvas-start"
-          tabIndex="-1"
-          id="DashboardOffcanvasMenu"
-          data-bs-scroll="true"
-        >
-          <SidebarMenu />
+      {/* Charts & Activities */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Statistics Chart */}
+        <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <h4 className="text-lg font-semibold text-gray-900 mb-4">{t('statistics') || "Statistiques"}</h4>
+          <StatisticsChart />
+        </div>
+
+        {/* Recent Activities */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <h4 className="text-lg font-semibold text-gray-900 mb-4">{t('recent_activities') || "Activités récentes"}</h4>
+          <Activities />
         </div>
       </div>
-      {/* End sidebar_menu */}
 
-      {/* <!-- Our Dashbord --> */}
-      <section className="our-dashbord dashbord bgc-f7 pb50">
-        <div className="container-fluid ovh">
-          <div className="row">
-            <div className="col-lg-12 maxw100flex-992">
-              <div className="row">
-                {/* Start Dashboard Navigation */}
-                <div className="col-lg-12">
-                  <div className="dashboard_navigationbar dn db-1024">
-                    <div className="dropdown">
-                      <button
-                        className="dropbtn"
-                        data-bs-toggle="offcanvas"
-                        data-bs-target="#DashboardOffcanvasMenu"
-                        aria-controls="DashboardOffcanvasMenu"
-                      >
-                        <i className="fa fa-bars pr10"></i> {t('dashboard') || "Tableau de bord"}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                {/* End Dashboard Navigation */}
-
-                <div className="col-lg-12 mb10">
-                  <div className="breadcrumb_content style2">
-                    <h2 className="breadcrumb_title">{t('dashboard') || "Tableau de bord"}</h2>
-                    <p>{t('welcome_message') || "Bienvenue sur votre espace d'administration"}</p>
-                  </div>
-                </div>
-              </div>
-              {/* End .row */}
-
-              <div className="row">
-                <AllStatistics />
-              </div>
-              {/* End .row Dashboard top statistics */}
-
-              <div className="row">
-                <div className="col-xl-7">
-                  <div className="application_statics">
-                    <h4 className="mb-4">{t('statistics') || "Statistiques"}</h4>
-                    <StatisticsChart />
-                  </div>
-                </div>
-                {/* End statistics chart */}
-
-                <div className="col-xl-5">
-                  <div className="recent_job_activity">
-                    <h4 className="title mb-4">{t('recent_activities') || "Activités récentes"}</h4>
-                    <Activities />
-                  </div>
-                </div>
-              </div>
-              {/* End .row  */}
-
-              <div className="row mt50">
-                <div className="col-lg-12">
-                  <div className="copyright-widget text-center">
-                    <p>© {new Date().getFullYear()} KADOOR SERVICE. Tous droits réservés.</p>
-                  </div>
-                </div>
-              </div>
-              {/* End .row */}
-            </div>
-            {/* End .col */}
-          </div>
-        </div>
-      </section>
-    </>
+      {/* Footer */}
+      <div className="mt-8 text-center">
+        <p className="text-gray-400 text-sm">© {new Date().getFullYear()} KADOOR SERVICE. Tous droits réservés.</p>
+      </div>
+    </AdminLayout>
   );
 };
 
-export default index;
+export default MyDashboard;

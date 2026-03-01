@@ -41,6 +41,7 @@ const HeroSlider = () => {
 
     const getTitle = (slide) => locale === 'fr' ? slide.titleFr : slide.titleEn;
     const getSubtitle = (slide) => locale === 'fr' ? slide.subtitleFr : slide.subtitleEn;
+    const getButtonText = (slide) => locale === 'fr' ? slide.buttonTextFr : slide.buttonTextEn;
 
     // Normaliser les liens pour qu'ils fonctionnent avec next-intl
     const normalizeLink = (link) => {
@@ -70,15 +71,13 @@ const HeroSlider = () => {
     if (loading) {
         return (
             <div
-                className="hero-loading d-flex align-items-center justify-content-center"
+                className="flex items-center justify-center"
                 style={{
                     minHeight: '80vh',
                     background: 'linear-gradient(135deg, #b91c1c 0%, #d4af37 100%)'
                 }}
             >
-                <div className="spinner-border text-white" role="status">
-                    <span className="visually-hidden">Loading...</span>
-                </div>
+                <div className="w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
             </div>
         );
     }
@@ -151,7 +150,6 @@ const HeroSlider = () => {
                     background: linear-gradient(135deg, #b91c1c 0%, #d4af37 100%);
                     color: #fff;
                     border: none;
-                    border-radius: 50px;
                     transition: all 0.3s ease;
                     box-shadow: 0 4px 15px rgba(185, 28, 28, 0.4);
                     text-decoration: none;
@@ -180,6 +178,13 @@ const HeroSlider = () => {
                     z-index: 3;
                     width: 50px;
                     height: 50px;
+                    background: rgba(255,255,255,0.25);
+                    border-radius: 50%;
+                    transition: background 0.3s ease;
+                }
+                .hero-slider-wrapper .slick-prev:hover,
+                .hero-slider-wrapper .slick-next:hover {
+                    background: rgba(255,255,255,0.5);
                 }
                 .hero-slider-wrapper .slick-prev {
                     left: 30px;
@@ -189,9 +194,9 @@ const HeroSlider = () => {
                 }
                 .hero-slider-wrapper .slick-prev:before,
                 .hero-slider-wrapper .slick-next:before {
-                    font-size: 40px;
+                    font-size: 28px;
                     color: #fff;
-                    opacity: 0.8;
+                    opacity: 1;
                 }
 
                 @media (max-width: 768px) {
@@ -222,7 +227,8 @@ const HeroSlider = () => {
                     subtitleFr: "Votre partenaire auto & immobilier",
                     subtitleEn: "Your auto & real estate partner",
                     imageUrl: "https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=1920",
-                    buttonText: "Nos Services",
+                    buttonTextFr: "Nos Services",
+                    buttonTextEn: "Our Services",
                     buttonLink: "/vehicles"
                 }]).map((slide) => (
                     <div key={slide.id}>
@@ -233,9 +239,9 @@ const HeroSlider = () => {
                             <div className="hero-content">
                                 <h4 className="hero-subtitle">{getSubtitle(slide)}</h4>
                                 <h1 className="hero-title">{getTitle(slide)}</h1>
-                                {slide.buttonText && (
+                                {(slide.buttonText || slide.buttonTextFr || slide.buttonTextEn) && (
                                     <Link href={normalizeLink(slide.buttonLink)} className="hero-btn">
-                                        {slide.buttonText}
+                                        {getButtonText(slide)}
                                     </Link>
                                 )}
                             </div>

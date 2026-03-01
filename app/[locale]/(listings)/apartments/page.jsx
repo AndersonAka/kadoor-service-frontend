@@ -1,4 +1,4 @@
-import GridV2 from "@/components/listing-grid/grid-v2";
+import ApartmentsListing from "@/components/listings/ApartmentsListing";
 import { getTranslations } from "next-intl/server";
 
 export async function generateMetadata({ params }) {
@@ -12,11 +12,7 @@ export async function generateMetadata({ params }) {
 }
 
 const ApartmentsPage = () => {
-  return (
-    <>
-      <GridV2 dataType="apartments" />
-    </>
-  );
+  return <ApartmentsListing />;
 };
 
 export default ApartmentsPage;

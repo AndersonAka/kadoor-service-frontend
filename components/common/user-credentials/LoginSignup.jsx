@@ -7,13 +7,14 @@ import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import GoogleSignInButton from "../GoogleSignInButton";
 
-const LoginSignup = () => {
+const LoginSignup = ({ onClose }) => {
   const tAuth = useTranslations("Auth");
   const tLogin = useTranslations("LoginPage");
   const tRegister = useTranslations("RegisterPage");
 
   const { login, register } = useAuth();
   const [googleError, setGoogleError] = useState("");
+  const [activeTab, setActiveTab] = useState('login'); // 'login' or 'register'
   
   // Login state
   const [loginEmail, setLoginEmail] = useState("");
@@ -41,6 +42,9 @@ const LoginSignup = () => {
     const result = await login(loginEmail, loginPassword);
     if (!result.success) {
       setLoginError(result.error);
+    } else {
+      // Close modal on successful login
+      onClose && onClose();
     }
     setLoginLoading(false);
   };
@@ -70,6 +74,9 @@ const LoginSignup = () => {
 
     if (!result.success) {
       setRegisterError(result.error);
+    } else {
+      // Close modal on successful registration
+      onClose && onClose();
     }
     setRegisterLoading(false);
   };
@@ -79,58 +86,51 @@ const LoginSignup = () => {
       <div className="modal-header">
         <button
           type="button"
-          data-bs-dismiss="modal"
+          onClick={onClose}
           aria-label="Close"
           className="btn-close"
-        ></button>
+        >
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
       </div>
-      {/* End .modal-header */}
 
       <div className="modal-body container pb20">
         <div className="row">
           <div className="col-lg-12">
-            <ul className="sign_up_tab nav nav-tabs" id="myTab" role="tablist">
+            <ul className="sign_up_tab nav nav-tabs" role="tablist">
               <li className="nav-item">
-                <a
-                  className="nav-link active"
-                  id="home-tab"
-                  data-bs-toggle="tab"
-                  href="#home"
+                <button
+                  type="button"
+                  className={`nav-link ${activeTab === 'login' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('login')}
                   role="tab"
-                  aria-controls="home"
-                  aria-selected="true"
                 >
                   {tAuth("login")}
-                </a>
+                </button>
               </li>
-              {/* End login tab */}
 
               <li className="nav-item">
-                <a
-                  className="nav-link"
-                  id="profile-tab"
-                  data-bs-toggle="tab"
-                  href="#profile"
+                <button
+                  type="button"
+                  className={`nav-link ${activeTab === 'register' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('register')}
                   role="tab"
-                  aria-controls="profile"
-                  aria-selected="false"
                 >
                   {tAuth("register")}
-                </a>
+                </button>
               </li>
-              {/* End Register tab */}
             </ul>
-            {/* End .sign_up_tab */}
           </div>
         </div>
-        {/* End .row */}
 
-        <div className="tab-content container" id="myTabContent">
+        <div className="tab-content container">
+          {/* Login Tab */}
           <div
-            className="row mt25 tab-pane fade show active"
-            id="home"
+            style={{ display: activeTab === 'login' ? 'flex' : 'none' }}
+            className="row mt25 tab-pane"
             role="tabpanel"
-            aria-labelledby="home-tab"
           >
             <div className="col-lg-6 col-xl-6">
               <div className="login_thumb">
@@ -161,14 +161,7 @@ const LoginSignup = () => {
                     <div className="col-lg-12">
                       <GoogleSignInButton 
                         mode="signin"
-                        onSuccess={() => {
-                          // Fermer le modal
-                          const modal = document.getElementById('logInModal');
-                          if (modal) {
-                            const bsModal = window.bootstrap?.Modal?.getInstance(modal);
-                            bsModal?.hide();
-                          }
-                        }}
+                        onSuccess={() => onClose && onClose()}
                         onError={(error) => setGoogleError(error)}
                       />
                     </div>
@@ -246,11 +239,11 @@ const LoginSignup = () => {
           </div>
           {/* End .tab-pane */}
 
+          {/* Register Tab */}
           <div
-            className="row mt25 tab-pane fade"
-            id="profile"
+            style={{ display: activeTab === 'register' ? 'flex' : 'none' }}
+            className="row mt25 tab-pane"
             role="tabpanel"
-            aria-labelledby="profile-tab"
           >
             <div className="col-lg-6 col-xl-6">
               <div className="regstr_thumb">
@@ -280,14 +273,7 @@ const LoginSignup = () => {
                     <div className="col-lg-12">
                       <GoogleSignInButton 
                         mode="signup"
-                        onSuccess={() => {
-                          // Fermer le modal
-                          const modal = document.getElementById('logInModal');
-                          if (modal) {
-                            const bsModal = window.bootstrap?.Modal?.getInstance(modal);
-                            bsModal?.hide();
-                          }
-                        }}
+                        onSuccess={() => onClose && onClose()}
                         onError={(error) => setGoogleError(error)}
                       />
                     </div>

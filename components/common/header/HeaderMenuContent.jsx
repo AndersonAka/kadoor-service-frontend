@@ -1,5 +1,6 @@
 import { Link, usePathname } from "@/i18n/routing";
 import LanguageSwitcher from "@/components/common/LanguageSwitcher";
+import CurrencySelector from "@/components/common/CurrencySelector";
 import { useTranslations } from 'next-intl';
 import { useAuth } from "@/context/AuthContext";
 import Image from "next/image";
@@ -246,6 +247,10 @@ const HeaderMenuContent = ({ float = "" }) => {
           </a>
         </li>
       )}
+
+      <li className={`list-inline-item list_s ${float}`}>
+        <CurrencySelector />
+      </li>
 
       <li className={`list-inline-item list_s ${float}`}>
         <LanguageSwitcher />

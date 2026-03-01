@@ -1,11 +1,11 @@
 import AboutUs from "@/components/about-us";
 
 export const metadata = {
-  title: "About Us || FindHouse - Real Estate React Template",
-  description: "FindHouse - Real Estate React Template",
+  title: "À Propos | KADOOR SERVICE",
+  description: "Découvrez KADOOR SERVICE, votre partenaire de confiance pour la location de véhicules et d'appartements en Côte d'Ivoire.",
 };
 
-const index = () => {
+const AboutUsPage = () => {
   return (
     <>
       <AboutUs />
@@ -13,4 +13,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default AboutUsPage;

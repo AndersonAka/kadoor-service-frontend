@@ -101,20 +101,17 @@ export default function StatisticsChart() {
 
   if (loading || !chartData) {
     return (
-      <div className="text-center p-4">
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">{t('loading') || "Chargement des données..."}</span>
-        </div>
+      <div className="flex items-center justify-center py-12">
+        <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
 
   return (
     <div>
-      <div className="mb-3 d-flex justify-content-end">
+      <div className="flex justify-end mb-4">
         <select
-          className="form-select"
-          style={{ width: 'auto' }}
+          className="px-3 py-1.5 text-sm bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20"
           value={period}
           onChange={(e) => setPeriod(e.target.value)}
         >

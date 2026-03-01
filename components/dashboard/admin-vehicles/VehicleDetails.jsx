@@ -2,9 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from "next/navigation";
-import Header from "../../common/header/dashboard/Header";
-import SidebarMenu from "../../common/header/dashboard/SidebarMenu";
-import MobileMenu from "../../common/header/MobileMenu";
+import AdminLayout from "@/components/admin/AdminLayout";
 import adminService from '@/services/adminService';
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
@@ -78,243 +76,205 @@ const AdminVehicleDetails = () => {
 
   if (loading) {
     return (
-      <>
-        <Header />
-        <MobileMenu />
-        <div className="dashboard_sidebar_menu">
-          <div className="offcanvas offcanvas-dashboard offcanvas-start" tabIndex="-1" id="DashboardOffcanvasMenu" data-bs-scroll="true">
-            <SidebarMenu />
-          </div>
+      <AdminLayout>
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
         </div>
-        <div className="d-flex justify-content-center align-items-center min-vh-100">
-          <div className="spinner-border text-primary" role="status">
-            <span className="visually-hidden">{t('loading') || "Chargement..."}</span>
-          </div>
-        </div>
-      </>
+      </AdminLayout>
     );
   }
 
   if (!vehicle) {
     return (
-      <>
-        <Header />
-        <MobileMenu />
-        <div className="dashboard_sidebar_menu">
-          <div className="offcanvas offcanvas-dashboard offcanvas-start" tabIndex="-1" id="DashboardOffcanvasMenu" data-bs-scroll="true">
-            <SidebarMenu />
-          </div>
+      <AdminLayout>
+        <div className="text-center py-20">
+          <h4 className="text-xl font-semibold text-gray-900 mb-4">{t('vehicle_not_found') || "Véhicule non trouvé"}</h4>
+          <Link href="/admin/vehicles" className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors">
+            {t('back_to_list') || "Retour à la liste"}
+          </Link>
         </div>
-        <div className="text-center py-5">
-          <h4>{t('vehicle_not_found') || "Véhicule non trouvé"}</h4>
-          <Link href="/admin/vehicles" className="btn btn-thm">{t('back_to_list') || "Retour à la liste"}</Link>
-        </div>
-      </>
+      </AdminLayout>
     );
   }
 
   return (
-    <>
-      <Header />
-      <MobileMenu />
-
-      <div className="dashboard_sidebar_menu">
-        <div className="offcanvas offcanvas-dashboard offcanvas-start" tabIndex="-1" id="DashboardOffcanvasMenu" data-bs-scroll="true">
-          <SidebarMenu />
-        </div>
+    <AdminLayout>
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+        <h1 className="text-2xl font-bold text-gray-900">{t('edit_vehicle') || "Modifier le véhicule"}</h1>
+        <Link href="/admin/vehicles" className="inline-flex items-center gap-2 text-gray-600 hover:text-primary transition-colors">
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          {t('back_to_list') || "Retour à la liste"}
+        </Link>
       </div>
 
-      <section className="our-dashbord dashbord bgc-f7 pb50">
-        <div className="container-fluid ovh">
-          <div className="row">
-            <div className="col-lg-12 maxw100flex-992">
-              <div className="row">
-                <div className="col-lg-12">
-                  <div className="dashboard_navigationbar dn db-1024">
-                    <div className="dropdown">
-                      <button className="dropbtn" data-bs-toggle="offcanvas" data-bs-target="#DashboardOffcanvasMenu" aria-controls="DashboardOffcanvasMenu">
-                        <i className="fa fa-bars pr10"></i> {t('navigation') || "Navigation"}
-                      </button>
-                    </div>
-                  </div>
-                </div>
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+          {error}
+        </div>
+      )}
 
-                <div className="col-lg-12 mb10">
-                  <div className="breadcrumb_content style2">
-                    <h2 className="breadcrumb_title">{t('edit_vehicle') || "Modifier le véhicule"}</h2>
-                    <Link href="/admin/vehicles" className="btn btn-thm-outline">
-                      <i className="fa fa-arrow-left me-2"></i>
-                      {t('back_to_list') || "Retour à la liste"}
-                    </Link>
-                  </div>
-                </div>
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <form onSubmit={handleSubmit}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">{t('title') || "Titre"} *</label>
+              <input
+                type="text"
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors"
+                name="title"
+                value={formData.title}
+                onChange={handleChange}
+                required
+              />
+            </div>
 
-                {error && (
-                  <div className="col-lg-12 mb-3">
-                    <div className="alert alert-danger" role="alert">
-                      {error}
-                    </div>
-                  </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">{t('type') || "Type"} *</label>
+              <select
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors"
+                name="type"
+                value={formData.type}
+                onChange={handleChange}
+                required
+              >
+                <option value="">{t('select_type') || "Sélectionner un type"}</option>
+                <option value="Berline">Berline</option>
+                <option value="SUV">SUV</option>
+                <option value="4x4">4x4</option>
+                <option value="Citadine">Citadine</option>
+                <option value="Utilitaire">Utilitaire</option>
+                <option value="Luxe">Luxe</option>
+                <option value="Fourgonnette">Fourgonnette</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">{t('brand') || "Marque"}</label>
+              <input
+                type="text"
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors"
+                name="brand"
+                value={formData.brand}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">{t('model') || "Modèle"}</label>
+              <input
+                type="text"
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors"
+                name="model"
+                value={formData.model}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">{t('price_per_day') || "Prix/jour (FCFA)"} *</label>
+              <input
+                type="number"
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors"
+                name="pricePerDay"
+                value={formData.pricePerDay}
+                onChange={handleChange}
+                required
+                min="0"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">{t('location') || "Localisation"}</label>
+              <input
+                type="text"
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors"
+                name="location"
+                value={formData.location}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">{t('transmission') || "Transmission"}</label>
+              <select
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors"
+                name="transmission"
+                value={formData.transmission}
+                onChange={handleChange}
+              >
+                <option value="">Sélectionner</option>
+                <option value="Automatique">Automatique</option>
+                <option value="Manuelle">Manuelle</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">{t('seats') || "Places"}</label>
+              <input
+                type="number"
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors"
+                name="seats"
+                value={formData.seats}
+                onChange={handleChange}
+                min="1"
+              />
+            </div>
+
+            <div className="flex items-center">
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="isAvailable"
+                  checked={formData.isAvailable}
+                  onChange={handleChange}
+                  className="w-5 h-5 text-primary border-gray-300 rounded focus:ring-primary"
+                />
+                <span className="text-sm font-medium text-gray-700">{t('available') || "Disponible"}</span>
+              </label>
+            </div>
+
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">{t('description') || "Description"}</label>
+              <textarea
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors"
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                rows="5"
+              />
+            </div>
+
+            <div className="md:col-span-2 flex gap-3 pt-4">
+              <button
+                type="submit"
+                disabled={saving}
+                className="inline-flex items-center gap-2 px-6 py-2.5 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50"
+              >
+                {saving ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    {t('saving') || "Enregistrement..."}
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    {t('save_changes') || "Enregistrer"}
+                  </>
                 )}
-
-                <div className="col-lg-12">
-                  <div className="my_dashboard_review mb40">
-                    <form onSubmit={handleSubmit}>
-                      <div className="row">
-                        <div className="col-lg-6">
-                          <div className="my_profile_setting_input form-group">
-                            <label>{t('title') || "Titre"} *</label>
-                            <input
-                              type="text"
-                              className="form-control"
-                              name="title"
-                              value={formData.title}
-                              onChange={handleChange}
-                              required
-                            />
-                          </div>
-                        </div>
-
-                        <div className="col-lg-6">
-                          <div className="my_profile_setting_input form-group">
-                            <label>{t('type') || "Type"} *</label>
-                            <select className="form-control" name="type" value={formData.type} onChange={handleChange} required>
-                              <option value="">{t('select_type') || "Sélectionner un type"}</option>
-                              <option value="Berline">Berline</option>
-                              <option value="SUV">SUV</option>
-                              <option value="Utilitaire">Utilitaire</option>
-                              <option value="Luxe">Luxe</option>
-                            </select>
-                          </div>
-                        </div>
-
-                        <div className="col-lg-6">
-                          <div className="my_profile_setting_input form-group">
-                            <label>{t('brand') || "Marque"}</label>
-                            <input
-                              type="text"
-                              className="form-control"
-                              name="brand"
-                              value={formData.brand}
-                              onChange={handleChange}
-                            />
-                          </div>
-                        </div>
-
-                        <div className="col-lg-6">
-                          <div className="my_profile_setting_input form-group">
-                            <label>{t('model') || "Modèle"}</label>
-                            <input
-                              type="text"
-                              className="form-control"
-                              name="model"
-                              value={formData.model}
-                              onChange={handleChange}
-                            />
-                          </div>
-                        </div>
-
-                        <div className="col-lg-6">
-                          <div className="my_profile_setting_input form-group">
-                            <label>{t('year') || "Année"}</label>
-                            <input
-                              type="number"
-                              className="form-control"
-                              name="year"
-                              value={formData.year}
-                              onChange={handleChange}
-                              min="1900"
-                              max={new Date().getFullYear() + 1}
-                            />
-                          </div>
-                        </div>
-
-                        <div className="col-lg-6">
-                          <div className="my_profile_setting_input form-group">
-                            <label>{t('price_per_day') || "Prix/jour (FCFA)"} *</label>
-                            <input
-                              type="number"
-                              className="form-control"
-                              name="pricePerDay"
-                              value={formData.pricePerDay}
-                              onChange={handleChange}
-                              required
-                              min="0"
-                            />
-                          </div>
-                        </div>
-
-                        <div className="col-lg-6">
-                          <div className="my_profile_setting_input form-group">
-                            <label>{t('location') || "Localisation"}</label>
-                            <input
-                              type="text"
-                              className="form-control"
-                              name="location"
-                              value={formData.location}
-                              onChange={handleChange}
-                            />
-                          </div>
-                        </div>
-
-                        <div className="col-lg-6">
-                          <div className="my_profile_setting_input form-group">
-                            <label>
-                              <input
-                                type="checkbox"
-                                name="isAvailable"
-                                checked={formData.isAvailable}
-                                onChange={handleChange}
-                                className="me-2"
-                              />
-                              {t('available') || "Disponible"}
-                            </label>
-                          </div>
-                        </div>
-
-                        <div className="col-lg-12">
-                          <div className="my_profile_setting_input form-group">
-                            <label>{t('description') || "Description"}</label>
-                            <textarea
-                              className="form-control"
-                              name="description"
-                              value={formData.description}
-                              onChange={handleChange}
-                              rows="5"
-                            />
-                          </div>
-                        </div>
-
-                        <div className="col-xl-12">
-                          <div className="my_profile_setting_input">
-                            <button type="submit" className="btn btn-thm" disabled={saving}>
-                              {saving ? (
-                                <>
-                                  <span className="spinner-border spinner-border-sm me-2" role="status"></span>
-                                  {t('saving') || "Enregistrement..."}
-                                </>
-                              ) : (
-                                <>
-                                  <i className="fa fa-save me-2"></i>
-                                  {t('save_changes') || "Enregistrer les modifications"}
-                                </>
-                              )}
-                            </button>
-                            <Link href="/admin/vehicles" className="btn btn-secondary ms-2">
-                              {t('cancel') || "Annuler"}
-                            </Link>
-                          </div>
-                        </div>
-                      </div>
-                    </form>
-                  </div>
-                </div>
-              </div>
+              </button>
+              <Link href="/admin/vehicles" className="inline-flex items-center gap-2 px-6 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                {t('cancel') || "Annuler"}
+              </Link>
             </div>
           </div>
-        </div>
-      </section>
-    </>
+        </form>
+      </div>
+    </AdminLayout>
   );
 };
 

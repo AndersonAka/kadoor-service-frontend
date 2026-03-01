@@ -1,32 +1,13 @@
-import Link from "next/link";
-import findProperties from "../../data/findProperties";
-import Image from "next/image";
-
 const FindProperties = () => {
   return (
-    <>
-      {findProperties.slice(0, 4).map((item) => (
-        <div className={`col-lg-4 ${item.column}`} key={item.id}>
-          <Link href="/listing-grid-v1" className="properti_city d-block">
-            <div className="thumb">
-              <Image
-                width={652}
-                height={352}
-                className="img-fluid w100 h-100 cover"
-                src={item.img}
-                alt="pc1.jpg"
-              />
-            </div>
-            <div className="overlay">
-              <div className="details">
-                <h4>{item.name}</h4>
-                <p>{item.number} Properties</p>
-              </div>
-            </div>
-          </Link>
+    <section className="py-16 bg-gray-50">
+      <div className="container-kadoor">
+        <div className="text-center">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">Trouvez votre bien idéal</h2>
+          <p className="text-gray-500">Parcourez notre sélection de véhicules et appartements</p>
         </div>
-      ))}
-    </>
+      </div>
+    </section>
   );
 };
 

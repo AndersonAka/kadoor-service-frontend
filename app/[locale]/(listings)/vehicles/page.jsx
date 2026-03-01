@@ -1,4 +1,4 @@
-import GridV1 from "@/components/listing-grid/grid-v1";
+import VehiclesListing from "@/components/listings/VehiclesListing";
 import { getTranslations } from "next-intl/server";
 
 export async function generateMetadata({ params }) {
@@ -12,11 +12,7 @@ export async function generateMetadata({ params }) {
 }
 
 const VehiclesPage = () => {
-  return (
-    <>
-      <GridV1 dataType="vehicles" />
-    </>
-  );
+  return <VehiclesListing />;
 };
 
 export default VehiclesPage;

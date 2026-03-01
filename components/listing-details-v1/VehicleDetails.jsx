@@ -6,53 +6,29 @@ import { useTranslatedText } from '@/hooks/useAutoTranslate';
 const VehicleDetails = ({ item }) => {
     const t = useTranslations('Vehicles');
     
-    // Traduire les valeurs dynamiques
     const translatedMake = useTranslatedText(item?.make || '', 'fr');
     const translatedModel = useTranslatedText(item?.model || '', 'fr');
     const translatedTransmission = useTranslatedText(item?.transmission || '', 'fr');
     const translatedFuel = useTranslatedText(item?.fuel || '', 'fr');
 
+    const specs = [
+        { label: t('make'), value: translatedMake },
+        { label: t('model'), value: translatedModel },
+        { label: t('year'), value: item?.year },
+        { label: t('transmission'), value: translatedTransmission },
+        { label: t('fuel'), value: translatedFuel },
+        { label: t('seats'), value: item?.seats },
+    ].filter(s => s.value);
+
     return (
-        <>
-            <div className="col-md-6 col-lg-6 col-xl-4">
-                <ul className="list-inline-item">
-                    <li>
-                        <p>
-                            {t('make')} : <span>{translatedMake}</span>
-                        </p>
-                    </li>
-                    <li>
-                        <p>
-                            {t('model')} : <span>{translatedModel}</span>
-                        </p>
-                    </li>
-                    <li>
-                        <p>
-                            {t('year')} : <span>{item?.year}</span>
-                        </p>
-                    </li>
-                </ul>
-            </div>
-            <div className="col-md-6 col-lg-6 col-xl-4">
-                <ul className="list-inline-item">
-                    <li>
-                        <p>
-                            {t('transmission')} : <span>{translatedTransmission}</span>
-                        </p>
-                    </li>
-                    <li>
-                        <p>
-                            {t('fuel')} : <span>{translatedFuel}</span>
-                        </p>
-                    </li>
-                    <li>
-                        <p>
-                            {t('seats')} : <span>{item?.seats}</span>
-                        </p>
-                    </li>
-                </ul>
-            </div>
-        </>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {specs.map((spec, i) => (
+                <div key={i} className="bg-gray-50 rounded-lg p-4">
+                    <span className="block text-xs text-gray-400 mb-1">{spec.label}</span>
+                    <span className="font-semibold text-gray-900">{spec.value}</span>
+                </div>
+            ))}
+        </div>
     );
 };
 

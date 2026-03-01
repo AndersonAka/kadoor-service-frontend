@@ -5,17 +5,15 @@ import { useAuth } from "@/context/AuthContext";
 import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
 import { Link } from "@/i18n/routing";
-import Header from "../home-10/Header";
-import MobileMenu from "../common/header/MobileMenu";
-import PopupSignInUp from "../common/PopupSignInUp";
-import BreadCrumb from "../common/BreadCrumb";
-import Footer from "../common/footer/Footer";
-import CopyrightFooter from "../common/footer/CopyrightFooter";
+import HeaderTailwind from "../common/header/HeaderTailwind";
+import FooterTailwind from "../common/footer/FooterTailwind";
+import { useCurrency } from "@/context/CurrencyContext";
 
 const BookingDetails = () => {
   const { user } = useAuth();
   const params = useParams();
   const t = useTranslations('Bookings');
+  const { formatPrice } = useCurrency();
   const [booking, setBooking] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -97,50 +95,28 @@ const BookingDetails = () => {
     });
   };
 
-  const getStatusBadge = (status) => {
-    const statusConfig = {
-      'PENDING': { class: 'warning', text: t('status_pending') || 'En attente' },
-      'CONFIRMED': { class: 'success', text: t('status_confirmed') || 'Confirmée' },
-      'CANCELLED': { class: 'danger', text: t('status_cancelled') || 'Annulée' },
-      'COMPLETED': { class: 'info', text: t('status_completed') || 'Terminée' },
+  const getStatusConfig = (status) => {
+    const configs = {
+      'PENDING': { bg: 'bg-yellow-100', text: 'text-yellow-800', label: t('status_pending') || 'En attente' },
+      'CONFIRMED': { bg: 'bg-green-100', text: 'text-green-800', label: t('status_confirmed') || 'Confirmée' },
+      'CANCELLED': { bg: 'bg-red-100', text: 'text-red-800', label: t('status_cancelled') || 'Annulée' },
+      'COMPLETED': { bg: 'bg-blue-100', text: 'text-blue-800', label: t('status_completed') || 'Terminée' },
     };
-
-    const config = statusConfig[status] || { class: 'secondary', text: status };
-    return (
-      <span className={`badge bg-${config.class}`}>
-        {config.text}
-      </span>
-    );
+    return configs[status] || { bg: 'bg-gray-100', text: 'text-gray-800', label: status };
   };
 
   if (loading) {
     return (
       <>
-        <Header />
-        <MobileMenu />
-        <PopupSignInUp />
-        <BreadCrumb title={t("booking_details") || "Détails de la réservation"} />
-        <section className="our-bookings bgc-fa">
-          <div className="container">
-            <div className="row">
-              <div className="col-lg-12">
-                <div className="text-center py-5">
-                  <div className="spinner-border text-primary" role="status">
-                    <span className="visually-hidden">Chargement...</span>
-                  </div>
-                </div>
-              </div>
+        <HeaderTailwind />
+        <main className="pt-24 pb-16 min-h-screen bg-gray-50">
+          <div className="container-kadoor">
+            <div className="flex items-center justify-center py-20">
+              <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
             </div>
           </div>
-        </section>
-        <section className="footer_one">
-          <div className="container">
-            <div className="row">
-              <Footer />
-            </div>
-          </div>
-        </section>
-        <CopyrightFooter />
+        </main>
+        <FooterTailwind />
       </>
     );
   }
@@ -148,35 +124,24 @@ const BookingDetails = () => {
   if (error) {
     return (
       <>
-        <Header />
-        <MobileMenu />
-        <PopupSignInUp />
-        <BreadCrumb title={t("booking_details") || "Détails de la réservation"} />
-        <section className="our-bookings bgc-fa">
-          <div className="container">
-            <div className="row">
-              <div className="col-lg-12">
-                <div className="alert alert-danger" role="alert">
-                  {error}
-                </div>
-                <div className="text-center mt-4">
-                  <Link href="/bookings" className="btn btn-thm">
-                    <i className="fa fa-arrow-left me-2"></i>
-                    {t('back_to_bookings') || 'Retour aux réservations'}
-                  </Link>
-                </div>
-              </div>
+        <HeaderTailwind />
+        <main className="pt-24 pb-16 min-h-screen bg-gray-50">
+          <div className="container-kadoor">
+            <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg mb-6">
+              {error}
             </div>
+            <Link 
+              href="/bookings" 
+              className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              {t('back_to_bookings') || 'Retour aux réservations'}
+            </Link>
           </div>
-        </section>
-        <section className="footer_one">
-          <div className="container">
-            <div className="row">
-              <Footer />
-            </div>
-          </div>
-        </section>
-        <CopyrightFooter />
+        </main>
+        <FooterTailwind />
       </>
     );
   }
@@ -185,220 +150,230 @@ const BookingDetails = () => {
     return null;
   }
 
+  const statusConfig = getStatusConfig(booking.status);
+
   return (
     <>
-      <Header />
-      <MobileMenu />
-      <PopupSignInUp />
-      <BreadCrumb title={t("booking_details") || "Détails de la réservation"} />
+      <HeaderTailwind />
+      <main className="pt-24 pb-16 min-h-screen bg-gray-50">
+        <div className="container-kadoor">
+          {/* Header */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+            <h1 className="text-2xl font-bold text-gray-900">
+              {t('booking_details') || 'Détails de la réservation'}
+            </h1>
+            <Link 
+              href="/bookings" 
+              className="inline-flex items-center gap-2 text-gray-600 hover:text-primary transition-colors"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              {t('back_to_bookings') || 'Retour aux réservations'}
+            </Link>
+          </div>
 
-      <section className="our-bookings bgc-fa">
-        <div className="container">
-          <div className="row">
-            <div className="col-lg-12">
-              <div className="booking-details-wrapper">
-                <div className="d-flex justify-content-between align-items-center mb30">
-                  <h4>{t('booking_details') || 'Détails de la réservation'}</h4>
-                  <Link href="/bookings" className="btn btn-thm-outline">
-                    <i className="fa fa-arrow-left me-2"></i>
-                    {t('back_to_bookings') || 'Retour aux réservations'}
-                  </Link>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Main Content */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* Reservation Info Card */}
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <div className="bg-primary px-6 py-4">
+                  <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    {t('reservation_information') || 'Informations de la réservation'}
+                  </h2>
                 </div>
-
-                <div className="row">
-                  {/* Informations de la réservation */}
-                  <div className="col-lg-8">
-                    <div className="card mb30" style={{ border: 'none', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
-                      <div className="card-header bg-thm text-white">
-                        <h5 className="mb-0">
-                          <i className="fa fa-calendar-check-o me-2"></i>
-                          {t('reservation_information') || 'Informations de la réservation'}
-                        </h5>
-                      </div>
-                      <div className="card-body">
-                        <div className="row mb-3">
-                          <div className="col-md-6">
-                            <p className="mb-2">
-                              <strong><i className="fa fa-hashtag me-2 text-thm"></i>{t('reservation_id') || 'ID Réservation'}:</strong>
-                            </p>
-                            <p className="text-muted">{booking.id}</p>
-                          </div>
-                          <div className="col-md-6">
-                            <p className="mb-2">
-                              <strong><i className="fa fa-info-circle me-2 text-thm"></i>{t('status') || 'Statut'}:</strong>
-                            </p>
-                            <p>{getStatusBadge(booking.status)}</p>
-                          </div>
-                        </div>
-                        <div className="row mb-3">
-                          <div className="col-md-6">
-                            <p className="mb-2">
-                              <strong><i className="fa fa-calendar me-2 text-thm"></i>{t('start_date') || 'Date de début'}:</strong>
-                            </p>
-                            <p className="text-muted">{formatDateTime(booking.startDate)}</p>
-                          </div>
-                          <div className="col-md-6">
-                            <p className="mb-2">
-                              <strong><i className="fa fa-calendar-check-o me-2 text-thm"></i>{t('end_date') || 'Date de fin'}:</strong>
-                            </p>
-                            <p className="text-muted">{formatDateTime(booking.endDate)}</p>
-                          </div>
-                        </div>
-                        <div className="row">
-                          <div className="col-md-6">
-                            <p className="mb-2">
-                              <strong><i className="fa fa-money me-2 text-thm"></i>{t('total_price') || 'Prix total'}:</strong>
-                            </p>
-                            <p className="text-muted h5 text-thm">
-                              <strong>{booking.totalPrice?.toLocaleString('fr-FR')} FCFA</strong>
-                            </p>
-                          </div>
-                          <div className="col-md-6">
-                            <p className="mb-2">
-                              <strong><i className="fa fa-clock-o me-2 text-thm"></i>{t('created_at') || 'Créée le'}:</strong>
-                            </p>
-                            <p className="text-muted">{formatDateTime(booking.createdAt)}</p>
-                          </div>
-                        </div>
-                      </div>
+                <div className="p-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <p className="text-sm text-gray-500 mb-1">{t('reservation_id') || 'ID Réservation'}</p>
+                      <p className="font-mono text-sm text-gray-900 break-all">{booking.id}</p>
                     </div>
+                    <div>
+                      <p className="text-sm text-gray-500 mb-1">{t('status') || 'Statut'}</p>
+                      <span className={`inline-flex px-3 py-1 rounded-full text-sm font-medium ${statusConfig.bg} ${statusConfig.text}`}>
+                        {statusConfig.label}
+                      </span>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500 mb-1">{t('start_date') || 'Date de début'}</p>
+                      <p className="font-medium text-gray-900">{formatDateTime(booking.startDate)}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500 mb-1">{t('end_date') || 'Date de fin'}</p>
+                      <p className="font-medium text-gray-900">{formatDateTime(booking.endDate)}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500 mb-1">{t('total_price') || 'Prix total'}</p>
+                      <p className="text-xl font-bold text-primary">{formatPrice(booking.totalPrice)}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500 mb-1">{t('created_at') || 'Créée le'}</p>
+                      <p className="font-medium text-gray-900">{formatDateTime(booking.createdAt)}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-                    {/* Informations du service réservé */}
-                    <div className="card mb30" style={{ border: 'none', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
-                      <div className="card-header bg-info text-white">
-                        <h5 className="mb-0">
-                          <i className={booking.vehicle ? 'fa fa-car me-2' : 'fa fa-home me-2'}></i>
-                          {t('reserved_service') || 'Service réservé'}
-                        </h5>
-                      </div>
-                      <div className="card-body">
-                        {booking.vehicle ? (
-                          <>
-                            <h5 className="mb-3">{booking.vehicle.title}</h5>
-                            <div className="row">
-                              <div className="col-md-6 mb-2">
-                                <p><strong>{t('type') || 'Type'}:</strong> {t('vehicle') || 'Véhicule'}</p>
-                              </div>
-                              {booking.vehicle.brand && (
-                                <div className="col-md-6 mb-2">
-                                  <p><strong>{t('brand') || 'Marque'}:</strong> {booking.vehicle.brand}</p>
-                                </div>
-                              )}
-                              {booking.vehicle.model && (
-                                <div className="col-md-6 mb-2">
-                                  <p><strong>{t('model') || 'Modèle'}:</strong> {booking.vehicle.model}</p>
-                                </div>
-                              )}
-                              {booking.vehicle.pricePerDay && (
-                                <div className="col-md-6 mb-2">
-                                  <p><strong>{t('price_per_day') || 'Prix par jour'}:</strong> {booking.vehicle.pricePerDay.toLocaleString('fr-FR')} FCFA</p>
-                                </div>
-                              )}
-                            </div>
-                            <Link 
-                              href={`/vehicle-details/${booking.vehicle.id || booking.vehicleId}`}
-                              className="btn btn-sm btn-thm-outline mt-3"
-                            >
-                              <i className="fa fa-eye me-2"></i>
-                              {t('view_service') || 'Voir le service'}
-                            </Link>
-                          </>
-                        ) : booking.apartment ? (
-                          <>
-                            <h5 className="mb-3">{booking.apartment.title}</h5>
-                            <div className="row">
-                              <div className="col-md-6 mb-2">
-                                <p><strong>{t('type') || 'Type'}:</strong> {t('apartment') || 'Appartement'}</p>
-                              </div>
-                              {booking.apartment.pricePerDay && (
-                                <div className="col-md-6 mb-2">
-                                  <p><strong>{t('price_per_day') || 'Prix par jour'}:</strong> {booking.apartment.pricePerDay.toLocaleString('fr-FR')} FCFA</p>
-                                </div>
-                              )}
-                              {booking.apartment.bedrooms && (
-                                <div className="col-md-6 mb-2">
-                                  <p><strong>{t('bedrooms') || 'Chambres'}:</strong> {booking.apartment.bedrooms}</p>
-                                </div>
-                              )}
-                              {booking.apartment.bathrooms && (
-                                <div className="col-md-6 mb-2">
-                                  <p><strong>{t('bathrooms') || 'Salles de bain'}:</strong> {booking.apartment.bathrooms}</p>
-                                </div>
-                              )}
-                            </div>
-                            <Link 
-                              href={`/apartment-details/${booking.apartment.id || booking.apartmentId}`}
-                              className="btn btn-sm btn-thm-outline mt-3"
-                            >
-                              <i className="fa fa-eye me-2"></i>
-                              {t('view_service') || 'Voir le service'}
-                            </Link>
-                          </>
-                        ) : (
-                          <p className="text-muted">{t('service_not_found') || 'Service non trouvé'}</p>
+              {/* Service Info Card */}
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <div className="bg-blue-600 px-6 py-4">
+                  <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+                    {booking.vehicle ? (
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
+                      </svg>
+                    ) : (
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                      </svg>
+                    )}
+                    {t('reserved_service') || 'Service réservé'}
+                  </h2>
+                </div>
+                <div className="p-6">
+                  {booking.vehicle ? (
+                    <>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-4">{booking.vehicle.title}</h3>
+                      <div className="grid grid-cols-2 gap-4 mb-4">
+                        <div>
+                          <p className="text-sm text-gray-500">{t('type') || 'Type'}</p>
+                          <p className="font-medium">{t('vehicle') || 'Véhicule'}</p>
+                        </div>
+                        {booking.vehicle.make && (
+                          <div>
+                            <p className="text-sm text-gray-500">{t('brand') || 'Marque'}</p>
+                            <p className="font-medium">{booking.vehicle.make}</p>
+                          </div>
+                        )}
+                        {booking.vehicle.model && (
+                          <div>
+                            <p className="text-sm text-gray-500">{t('model') || 'Modèle'}</p>
+                            <p className="font-medium">{booking.vehicle.model}</p>
+                          </div>
+                        )}
+                        {booking.vehicle.pricePerDay && (
+                          <div>
+                            <p className="text-sm text-gray-500">{t('price_per_day') || 'Prix par jour'}</p>
+                            <p className="font-medium">{formatPrice(booking.vehicle.pricePerDay)}</p>
+                          </div>
                         )}
                       </div>
-                    </div>
-                  </div>
-
-                  {/* Actions */}
-                  <div className="col-lg-4">
-                    <div className="card" style={{ border: 'none', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
-                      <div className="card-header bg-thm text-white">
-                        <h5 className="mb-0">
-                          <i className="fa fa-cog me-2"></i>
-                          {t('actions') || 'Actions'}
-                        </h5>
-                      </div>
-                      <div className="card-body">
-                        <div className="d-grid gap-2">
-                          {booking.status === 'PENDING' && (
-                            <button 
-                              className="btn btn-danger"
-                              onClick={() => {
-                                if (confirm(t('confirm_cancel') || 'Êtes-vous sûr de vouloir annuler cette réservation ?')) {
-                                  // TODO: Implémenter l'annulation
-                                  alert(t('cancel_not_implemented') || 'Fonctionnalité d\'annulation à venir');
-                                }
-                              }}
-                            >
-                              <i className="fa fa-times me-2"></i>
-                              {t('cancel_booking') || 'Annuler la réservation'}
-                            </button>
-                          )}
-                          <Link 
-                            href={booking.vehicle ? `/vehicle-details/${booking.vehicle.id || booking.vehicleId}` : `/apartment-details/${booking.apartment.id || booking.apartmentId}`}
-                            className="btn btn-thm-outline"
-                          >
-                            <i className="fa fa-eye me-2"></i>
-                            {t('view_service') || 'Voir le service'}
-                          </Link>
-                          <Link 
-                            href="/bookings"
-                            className="btn btn-secondary"
-                          >
-                            <i className="fa fa-arrow-left me-2"></i>
-                            {t('back_to_bookings') || 'Retour aux réservations'}
-                          </Link>
+                      <Link 
+                        href={`/vehicle-details/${booking.vehicle.id || booking.vehicleId}`}
+                        className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors font-medium"
+                      >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                        {t('view_service') || 'Voir le service'}
+                      </Link>
+                    </>
+                  ) : booking.apartment ? (
+                    <>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-4">{booking.apartment.title}</h3>
+                      <div className="grid grid-cols-2 gap-4 mb-4">
+                        <div>
+                          <p className="text-sm text-gray-500">{t('type') || 'Type'}</p>
+                          <p className="font-medium">{t('apartment') || 'Appartement'}</p>
                         </div>
+                        {booking.apartment.pricePerNight && (
+                          <div>
+                            <p className="text-sm text-gray-500">{t('price_per_day') || 'Prix par nuit'}</p>
+                            <p className="font-medium">{formatPrice(booking.apartment.pricePerNight)}</p>
+                          </div>
+                        )}
+                        {booking.apartment.bedrooms && (
+                          <div>
+                            <p className="text-sm text-gray-500">{t('bedrooms') || 'Chambres'}</p>
+                            <p className="font-medium">{booking.apartment.bedrooms}</p>
+                          </div>
+                        )}
+                        {booking.apartment.bathrooms && (
+                          <div>
+                            <p className="text-sm text-gray-500">{t('bathrooms') || 'Salles de bain'}</p>
+                            <p className="font-medium">{booking.apartment.bathrooms}</p>
+                          </div>
+                        )}
                       </div>
-                    </div>
-                  </div>
+                      <Link 
+                        href={`/apartment-details/${booking.apartment.id || booking.apartmentId}`}
+                        className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors font-medium"
+                      >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                        {t('view_service') || 'Voir le service'}
+                      </Link>
+                    </>
+                  ) : (
+                    <p className="text-gray-500">{t('service_not_found') || 'Service non trouvé'}</p>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Sidebar - Actions */}
+            <div className="lg:col-span-1">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden sticky top-28">
+                <div className="bg-gray-800 px-6 py-4">
+                  <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    {t('actions') || 'Actions'}
+                  </h2>
+                </div>
+                <div className="p-6 space-y-3">
+                  {booking.status === 'PENDING' && (
+                    <button 
+                      className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
+                      onClick={() => {
+                        if (confirm(t('confirm_cancel') || 'Êtes-vous sûr de vouloir annuler cette réservation ?')) {
+                          alert(t('cancel_not_implemented') || 'Fonctionnalité d\'annulation à venir');
+                        }
+                      }}
+                    >
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                      {t('cancel_booking') || 'Annuler la réservation'}
+                    </button>
+                  )}
+                  <Link 
+                    href={booking.vehicle ? `/vehicle-details/${booking.vehicle.id || booking.vehicleId}` : `/apartment-details/${booking.apartment?.id || booking.apartmentId}`}
+                    className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 border border-primary text-primary rounded-lg hover:bg-primary/5 transition-colors font-medium"
+                  >
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                    {t('view_service') || 'Voir le service'}
+                  </Link>
+                  <Link 
+                    href="/bookings"
+                    className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium"
+                  >
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    {t('back_to_bookings') || 'Retour aux réservations'}
+                  </Link>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </section>
+      </main>
 
-      <section className="footer_one">
-        <div className="container">
-          <div className="row">
-            <Footer />
-          </div>
-        </div>
-      </section>
-      <CopyrightFooter />
+      <FooterTailwind />
     </>
   );
 };

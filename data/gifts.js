@@ -5,7 +5,7 @@ module.exports = [
         price: "15000",
         type: "Coffret Cadeau",
         title: "Panier Garni - Délice Local",
-        location: "Livraison Douala & Yaoundé",
+        location: "Livraison Côte d'Ivoire",
         saleTag: ["Nouveau", "Disponible"],
         itemDetails: [
             { name: "Articles", number: "12" },
